@@ -17,7 +17,19 @@ public class ButtonMouseListener implements MouseListener{
 	private static int counter = 0;
 	private static int prev_x = 0 ;
 	private static int prev_y = 0;
+	int finished = 0;
 	
+	
+	public int check_if_finished(JButton[][] btn) {
+		int count=0;
+		for (int i = 0; i < btn.length; i++) {
+			for (int j = 0; j < btn[i].length; j++) {
+				if(!btn[i][j].getName().equals("0"))
+					count++;
+			}
+		}
+		return count;
+	}
 	
 	ButtonMouseListener(JButton[][] btn , int x , int y ){
 		button = btn;
@@ -25,6 +37,10 @@ public class ButtonMouseListener implements MouseListener{
 		this.y = y;
 	}
 	
+	
+
+	public ButtonMouseListener() {
+	}
 
 	public void print_matrix_values(JButton[][] btn) {
 		for (int i = 0; i < btn.length; i++) {
@@ -37,7 +53,7 @@ public class ButtonMouseListener implements MouseListener{
 	
 
 	void show_hitted(JButton[][] button , int x , int y , int boat_number) {	
-		if(boat_number != 5 && boat_number != 4 && boat_number != 3 && boat_number != 2 && boat_number != 1) 
+		if(boat_number != 5 && boat_number != 4 && boat_number != 3 && boat_number != 2) 
 			return ;
 		
 		int key = 0;
@@ -67,7 +83,7 @@ public class ButtonMouseListener implements MouseListener{
 			}
 		}
 		
-		System.out.println(count);
+//		System.out.println(count);
 
 		
 		if(count%boat_number == 0) {
@@ -101,28 +117,20 @@ public class ButtonMouseListener implements MouseListener{
 	
 	public void add_boat_to_cell(JButton[][] btn , int x , int y , int boat_number) {
 		if(counter == 0) {
-//			if ( check_neighbours(btn , x , y) == 1) {
-//				System.out.println("bowdu");
 				btn[x][y].setName(String.valueOf(boat_number));
 				btn[x][y].setBackground(Color.BLACK);		
 				counter++;
-//			}
-		
 		}
 		else if(counter == 1) {
 			btn[x][y].setName(String.valueOf(boat_number));
 			btn[x][y].setBackground(Color.BLACK);	counter++;
-	
 			//check direction of boat : horizontal or vertical
 			if(check_H_or_V(btn ,x ,y) == 0) 		horizontal = 1;
-			else if(check_H_or_V(btn ,x ,y) == 1)	vertical = 1;
-		
+			else if(check_H_or_V(btn ,x ,y) == 1)	vertical = 1;	
 			counter++;
 			return ;
 		}
-		
-		System.out.println("horizontal: " + horizontal + "\n" + "vertical: " + vertical);
-		
+//		System.out.println("horizontal: " + horizontal + "\n" + "vertical: " + vertical);
 		
 		if(horizontal == 1) {
 			if(check_H_or_V(btn ,x ,y) == 0) { 	
@@ -140,14 +148,10 @@ public class ButtonMouseListener implements MouseListener{
 		}
 		
 	}
+	
 		
 	public int check_H_or_V(JButton[][] btn , int x, int y) {
 		//check for vertical
-		
-		
-		
-		
-		
 		if( !(btn[x][y+1].getName().equals("0")) || !(btn[x][y-1].getName().equals("0"))  )
 			return 1; 
 		//check for horizontal
@@ -159,26 +163,24 @@ public class ButtonMouseListener implements MouseListener{
 
 	private int check_neighbours(JButton[][] btn ,int x , int y) {
 		int diff = 0;
-//		System.out.println( x +"_"+(y+1) 	+" "+ btn[x][y+1].getName());
-//		System.out.println( x +"_"+(y-1) 	+" "+ btn[x][y-1].getName());
-//		System.out.println( (x+1) +"_"+y 	+" "+ btn[x+1][y+1].getName());
-//		System.out.println( (x-1) +"_"+y 	+" "+ btn[x-1][y+1].getName());
-
 		if( (btn[x][y+1].getName().equals("0")) && (btn[x][y-1].getName().equals("0")) && (btn[x+1][y].getName().equals("0")) 	&& (btn[x-1][y].getName().equals("0")) )
 				return 1;
-				
 		//if neighbours are not free( 0 )
 		return 0;
 	}
+	
 
 
 	@Override
 	public void mouseClicked(MouseEvent e ) {
-		System.out.println("index: ("+ x + "," + y + ")");
+//		System.out.println("index: ("+ x + "," + y + ")");
 		BoatMouseListener btn = new BoatMouseListener();
 		int bt = btn.get_boat_number();
 		show_hitted(button, x, y , bt);
-		
+		if(check_if_finished(button) == 7) {
+			finished = 1;
+		}
+		System.out.println(finished + " az qalib");
 	}
 	
 	

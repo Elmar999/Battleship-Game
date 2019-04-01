@@ -8,6 +8,7 @@ public class BoatMouseListener implements MouseListener {
 	private int boat_number = 0;
 	
 	private static int  btn = 0;
+	private static int count = 0;
 
 	
 	
@@ -24,6 +25,7 @@ public class BoatMouseListener implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		set_boat_number(boat_number);
+		System.out.println(count);
 		System.out.print(boat_number + " is selected\n");
 	}
 	
