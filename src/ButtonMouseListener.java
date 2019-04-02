@@ -9,7 +9,7 @@ import javax.swing.JButton;
 
 public class ButtonMouseListener implements MouseListener{
 
-	private JButton[][] button;
+	private static JButton[][] button;
 	private int x , y;
 	private int boat_number;
 	private static int horizontal = 0;
@@ -17,6 +17,7 @@ public class ButtonMouseListener implements MouseListener{
 	private static int counter = 0;
 	private static int prev_x = 0 ;
 	private static int prev_y = 0;
+	private int confirmed = 0;
 	int finished = 0;
 	
 	
@@ -38,8 +39,13 @@ public class ButtonMouseListener implements MouseListener{
 	}
 	
 	
+	public JButton[][] get_jbutton() {
+		return button;
+	}
+	
 
 	public ButtonMouseListener() {
+		confirmed = 1;
 	}
 
 	public void print_matrix_values(JButton[][] btn) {
@@ -173,14 +179,24 @@ public class ButtonMouseListener implements MouseListener{
 
 	@Override
 	public void mouseClicked(MouseEvent e ) {
-//		System.out.println("index: ("+ x + "," + y + ")");
+		
 		BoatMouseListener btn = new BoatMouseListener();
 		int bt = btn.get_boat_number();
-		show_hitted(button, x, y , bt);
-		if(check_if_finished(button) == 7) {
-			finished = 1;
+		if(confirmed == 1) {
+			System.out.println("confirm olundu");
+			for (int i = 1; i < 11; i++) {
+				for (int j = 1; j < 11; j++) {
+					if(!button[i][j].getName().equals("0")) {
+						button[i][j].setBackground(Color.RED);
+						System.out.println("hitted");
+					}
+				}
+			}
 		}
-		System.out.println(finished + " az qalib");
+		else {
+			System.out.println(bt);
+			show_hitted(button, x, y , bt);
+		}
 	}
 	
 	

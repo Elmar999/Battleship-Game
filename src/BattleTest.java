@@ -6,9 +6,33 @@ import java.awt.GridLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-public class BattleTest extends JFrame implements Runnable {
+public class BattleTest extends JFrame {
 		
 	JButton[][] button = new JButton[11][11];
+
+	public BattleTest() {
+		setVisible(true);  setSize(800, 400);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		Boats_button toolbar = new Boats_button();
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(11,11,1,1));
+		
+		fill_grid(button, panel);
+		add(toolbar, BorderLayout.SOUTH);
+		add(panel);
+		
+		for (int i = 0; i < button.length; i++) {
+			for (int j = 0; j < button.length; j++) {
+				button[i][j].addMouseListener(new ButtonMouseListener(button, i, j ));
+				button[i][j].setName(String.valueOf(0));
+			}
+		}	
+//		print_matrix_values(button);
+		
+	}
+
+	
 
 	
 	void fill_with_letter(JButton[][] button ,int row , int col , int n) {
@@ -63,48 +87,16 @@ public class BattleTest extends JFrame implements Runnable {
 		}
 	}
 	
-	public BattleTest() {
-		setVisible(true);  setSize(800, 400);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		Boats_button toolbar = new Boats_button();
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(11,11,1,1));
-		
-		fill_grid(button, panel);
-		add(toolbar, BorderLayout.SOUTH);
-		add(panel);
-		
-		for (int i = 0; i < button.length; i++) {
-			for (int j = 0; j < button.length; j++) {
-				button[i][j].addMouseListener(new ButtonMouseListener(button, i, j ));
-				button[i][j].setName(String.valueOf(0));
-			}
-		}	
-//		print_matrix_values(button);
-
-	}
-
-	public int finshed() {
-		ButtonMouseListener obj = new ButtonMouseListener();
-		return obj.finished;
-	}
 	
 	public void get_bomb(int x , int y) {
-		System.out.println("hitted");
-
 		if(!button[x][y].getName().equals("0")) {
 			button[x][y].setBackground(Color.RED);
-//			System.out.println("hitted");
+			System.out.println("hitted");
 		}
 	}
 
 
-	@Override
-	public void run() {
-		
-		
-	}
+	
 	
 	
 }

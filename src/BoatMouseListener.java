@@ -1,7 +1,10 @@
 package src;
 
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
+import javax.swing.JButton;
 
 public class BoatMouseListener implements MouseListener {
 
@@ -9,6 +12,8 @@ public class BoatMouseListener implements MouseListener {
 	
 	private static int  btn = 0;
 	private static int count = 0;
+	private JButton[][] button;
+	
 
 	
 	
@@ -25,10 +30,8 @@ public class BoatMouseListener implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		set_boat_number(boat_number);
-		System.out.println(count);
 		System.out.print(boat_number + " is selected\n");
 	}
-	
 	
 	public void set_boat_number(int boat_number) {
 		this.btn = boat_number;

@@ -10,18 +10,21 @@ public class Boats_button extends JPanel{
 	
 	public Boats_button() {
 		JButton[] Boat = new JButton[5];
+		JButton btn = new JButton("CONFIRM");
+//		btn.setName("CONFIRM");
 		create_boat_buttons(Boat);
+		add(btn);  btn.addMouseListener(new ButtonMouseListener());
 	}
 	
 
 	
-	public void create_boat_buttons(JButton[] Boat) {
-		String bt_name = " ";	int boat_number = 5;
+	public void create_boat_buttons(JButton[] Boat ) {
+			int boat_number = 2;
  		
-		for (int i = 1; i < Boat.length; i++) {		
-			Boat[i] = new JButton(bt_name.valueOf(boat_number)); 
+		for (int i = Boat.length - 1; i > 0; i--) {		
+			Boat[i] = new JButton(String.valueOf(boat_number)); 
 			add(Boat[i]);  Boat[i].addMouseListener( new BoatMouseListener(boat_number));
-			boat_number--;
+			boat_number++;
 		}
 	}
 
