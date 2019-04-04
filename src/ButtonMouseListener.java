@@ -183,15 +183,21 @@ public class ButtonMouseListener implements MouseListener{
 		BoatMouseListener btn = new BoatMouseListener();
 		int bt = btn.get_boat_number();
 		if(confirmed == 1) {
-			System.out.println("confirm olundu");
-			for (int i = 1; i < 11; i++) {
-				for (int j = 1; j < 11; j++) {
-					if(!button[i][j].getName().equals("0")) {
-						button[i][j].setBackground(Color.RED);
-						System.out.println("hitted");
-					}
-				}
-			}
+			//TODO attack buttons
+			Attack_frame fr = new Attack_frame(button);
+			//TODO launch_server()
+			
+			
+//			System.out.println("confirm olundu");
+//			for (int i = 1; i < 11; i++) {
+//				for (int j = 1; j < 11; j++) {
+//					if(!button[i][j].getName().equals("0")) {
+//						button[i][j].setBackground(Color.RED);
+//						System.out.println("hitted");
+//					}
+//				}
+//			}
+			
 		}
 		else {
 			System.out.println(bt);

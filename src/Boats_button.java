@@ -5,8 +5,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;;
 public class Boats_button extends JPanel{
-
-
 	
 	public Boats_button() {
 		JButton[] Boat = new JButton[5];

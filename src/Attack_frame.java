@@ -1,4 +1,5 @@
 package src;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -6,35 +7,36 @@ import java.awt.GridLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-public class BattleTest extends JFrame {
-		
-	JButton[][] button = new JButton[11][11];
 
-	public BattleTest() {
+public class Attack_frame extends JFrame {
+
+	
+	JButton[][] button_rival = new JButton[11][11];
+	JButton[][] btn_self = new JButton[11][11];
+	
+	public Attack_frame(JButton[][] btn) {
+		this.button_rival = btn;
 		setVisible(true);  setSize(600, 400);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocation(700, 10);
 		
-		Boats_button toolbar = new Boats_button();
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(11,11,1,1));
-		
-		fill_grid(button, panel);
-		add(toolbar, BorderLayout.SOUTH);
+		fill_grid(btn_self, panel);
 		add(panel);
 		
-		for (int i = 0; i < button.length; i++) {
-			for (int j = 0; j < button.length; j++) {
-				button[i][j].addMouseListener(new ButtonMouseListener(button, i, j ));
-				button[i][j].setName(String.valueOf(0));
+		for (int i = 0; i < btn_self.length; i++) {
+			for (int j = 0; j < btn_self.length; j++) {
+				btn_self[i][j].addMouseListener(new Attack_button_listener(button_rival, i , j , btn_self));
+				btn_self[i][j].setName(String.valueOf(0));
 			}
 		}	
 //		print_matrix_values(button);
 		
 	}
-
+	
 	
 
-	
 	void fill_with_letter(JButton[][] button ,int row , int col , int n) {
 		String letter ;
 		char[] ch = new char[2];
@@ -77,26 +79,6 @@ public class BattleTest extends JFrame {
 		}
 		button[0][0].setBackground(Color.gray);
 	}
-	
-	public void print_matrix_values(JButton[][] btn) {
-		for (int i = 0; i < btn.length; i++) {
-			for (int j = 0; j < btn.length; j++) {
-				System.out.print(btn[i][j].getName()+" ");
-			}
-			System.out.println();
-		}
-	}
-	
-	
-	public void get_bomb(int x , int y) {
-		if(!button[x][y].getName().equals("0")) {
-			button[x][y].setBackground(Color.RED);
-			System.out.println("hitted");
-		}
-	}
-
-
-	
 	
 	
 }
