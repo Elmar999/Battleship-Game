@@ -8,15 +8,15 @@ import javax.swing.JButton;
 
 public class Attack_button_listener implements MouseListener {
 
-	
+	public int finished = 0;
 	private int x = 0 , y = 0 ;
 	private JButton[][] btn_rival;
 	private JButton[][] btn_self;
-	public Attack_button_listener(JButton[][] btn_rival ,int  x , int y , JButton[][] btn_self ) {
+	public Attack_button_listener(int  x , int y , JButton[][] btn_self ) {
 		this.x = x;
 		this.y = y;
-		this.btn_self = btn_self;
-		this.btn_rival = btn_rival;
+		this.btn_rival = btn_self;
+//		this.btn_rival = btn_rival;
 		
 	}
 	
@@ -32,8 +32,12 @@ public class Attack_button_listener implements MouseListener {
 	
 	public void mouseClicked(MouseEvent e) {
 		System.out.println(this.x + " " + this.y);
+		finished = 1;
 		if(!btn_rival[x][y].getName().equals("0")) {
 			btn_rival[x][y].setBackground(Color.red);
+		}
+		else {
+			btn_rival[x][y].setBackground(Color.pink);
 		}
 		
 	}

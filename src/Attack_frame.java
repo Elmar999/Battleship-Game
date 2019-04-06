@@ -10,30 +10,46 @@ import javax.swing.JPanel;
 
 public class Attack_frame extends JFrame {
 
-	
-	JButton[][] button_rival = new JButton[11][11];
+	public int finish ;
+	JPanel pnl ;
 	JButton[][] btn_self = new JButton[11][11];
+	JButton[][] btn ;
 	
-	public Attack_frame(JButton[][] btn) {
-		this.button_rival = btn;
+	public Attack_frame( JButton[][] button_rival ) {
+		btn = button_rival;
 		setVisible(true);  setSize(600, 400);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocation(700, 10);
 		
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(11,11,1,1));
-		fill_grid(btn_self, panel);
-		add(panel);
+		JPanel pnl = new JPanel();
+		pnl.setLayout(new GridLayout(11,11,1,1));
+		add(pnl);
+		fill_grid(btn, pnl);
+
 		
-		for (int i = 0; i < btn_self.length; i++) {
-			for (int j = 0; j < btn_self.length; j++) {
-				btn_self[i][j].addMouseListener(new Attack_button_listener(button_rival, i , j , btn_self));
-				btn_self[i][j].setName(String.valueOf(0));
-			}
-		}	
+		
 //		print_matrix_values(button);
-		
+//		button_rival[5][5].setName("5");
 	}
+	
+	
+	
+	
+	public void fill_jbutton(JButton[][] btn ) {
+//		button_rival = new JButton[11][11];
+		Attack_button_listener obj = null;
+		
+		for (int i = 0; i < btn.length; i++) {
+			for (int j = 0; j < btn.length; j++) {
+				obj = new Attack_button_listener(i , j , btn);
+				btn[i][j].addMouseListener(obj);
+				btn[i][j].setName(String.valueOf(0));
+			}
+		}
+		finish = obj.finished;
+	}
+	
+	
 	
 	
 
@@ -54,7 +70,7 @@ public class Attack_frame extends JFrame {
 	}
 	
 	
-	void fill_grid(JButton[][] button , JPanel panel) {
+	void fill_grid(JButton[][] button , JPanel pnl) {
 		int ascii = 65; int number = '1';
 		
 		for(int i=0;i<11;i++){
@@ -73,7 +89,7 @@ public class Attack_frame extends JFrame {
 		    	else
 		    		button[i][j] = new JButton();
 
-		        panel.add(button[i][j]);
+		        pnl.add(button[i][j]);
 		        
 		     }
 		}

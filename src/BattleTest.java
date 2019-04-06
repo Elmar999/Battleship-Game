@@ -9,7 +9,8 @@ import javax.swing.JPanel;
 public class BattleTest extends JFrame {
 		
 	JButton[][] button = new JButton[11][11];
-
+	int confirm = 0;
+	
 	public BattleTest() {
 		setVisible(true);  setSize(600, 400);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -18,22 +19,29 @@ public class BattleTest extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(11,11,1,1));
 		
+		
 		fill_grid(button, panel);
 		add(toolbar, BorderLayout.SOUTH);
 		add(panel);
 		
 		for (int i = 0; i < button.length; i++) {
 			for (int j = 0; j < button.length; j++) {
-				button[i][j].addMouseListener(new ButtonMouseListener(button, i, j ));
+				button[i][j].addMouseListener(new ButtonMouseListener(button, i, j, confirm ));
 				button[i][j].setName(String.valueOf(0));
 			}
 		}	
 //		print_matrix_values(button);
 		
+		
+//		System.out.println("oldu");
+		
+		
 	}
-
 	
-
+	public int getconfirm() {
+		return confirm;
+	}
+	
 	
 	void fill_with_letter(JButton[][] button ,int row , int col , int n) {
 		String letter ;

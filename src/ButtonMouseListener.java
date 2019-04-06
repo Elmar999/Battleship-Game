@@ -3,23 +3,23 @@ package src;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 
 
 public class ButtonMouseListener implements MouseListener{
-
+	private static int ass = 0;
 	private static JButton[][] button;
 	private int x , y;
 	private int boat_number;
 	private static int horizontal = 0;
 	private static int vertical = 0;
 	private static int counter = 0;
-	private static int prev_x = 0 ;
-	private static int prev_y = 0;
 	private int confirmed = 0;
-	int finished = 0;
-	
+	static int finished = 0;
+	static int count = 0;
+	int confirm;
 	
 	public int check_if_finished(JButton[][] btn) {
 		int count=0;
@@ -32,10 +32,11 @@ public class ButtonMouseListener implements MouseListener{
 		return count;
 	}
 	
-	ButtonMouseListener(JButton[][] btn , int x , int y ){
+	ButtonMouseListener(JButton[][] btn , int x , int y , int confirm ){
 		button = btn;
 		this.x = x;
 		this.y = y;
+		confirm = 0;
 	}
 	
 	
@@ -114,7 +115,7 @@ public class ButtonMouseListener implements MouseListener{
 		else if(boat_number == 3)
 			return 2;
 		else if(boat_number == 2)
-			return 3;
+			return 1;
 	
 		return -1;
 		
@@ -179,32 +180,27 @@ public class ButtonMouseListener implements MouseListener{
 
 	@Override
 	public void mouseClicked(MouseEvent e ) {
-		
+		int nmb = 6;
+		JButton[][] button_rival = new JButton[11][11];
 		BoatMouseListener btn = new BoatMouseListener();
 		int bt = btn.get_boat_number();
-		if(confirmed == 1) {
-			//TODO attack buttons
-			Attack_frame fr = new Attack_frame(button);
-			//TODO launch_server()
-			
-			
-//			System.out.println("confirm olundu");
-//			for (int i = 1; i < 11; i++) {
-//				for (int j = 1; j < 11; j++) {
-//					if(!button[i][j].getName().equals("0")) {
-//						button[i][j].setBackground(Color.RED);
-//						System.out.println("hitted");
-//					}
-//				}
-//			}
-			
-		}
+		int i = 2;
+		int j = 2;
+			if(confirmed == 1) {
+				Attack_frame fr = new Attack_frame(button_rival);
+				confirm = confirmed;
+			}
 		else {
 			System.out.println(bt);
 			show_hitted(button, x, y , bt);
 		}
 	}
 	
+	
+	
+	public void Launch_boat(JButton[][] button) {
+		button[5][5].setName("5");
+	}
 	
 	public void set_boat_number(int boat_number) {
 		this.boat_number = boat_number;
