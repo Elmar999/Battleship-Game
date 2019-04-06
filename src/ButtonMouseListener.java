@@ -184,11 +184,8 @@ public class ButtonMouseListener implements MouseListener{
 		JButton[][] button_rival = new JButton[11][11];
 		BoatMouseListener btn = new BoatMouseListener();
 		int bt = btn.get_boat_number();
-		int i = 2;
-		int j = 2;
 			if(confirmed == 1) {
-				Attack_frame fr = new Attack_frame(button_rival);
-				confirm = confirmed;
+				System.out.println("kecek bota?");
 			}
 		else {
 			System.out.println(bt);
@@ -198,7 +195,7 @@ public class ButtonMouseListener implements MouseListener{
 	
 	
 	
-	public void Launch_boat(JButton[][] button) {
+	public void Launch_boat() {
 		button[5][5].setName("5");
 	}
 	

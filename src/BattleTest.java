@@ -1,33 +1,61 @@
 package src;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 public class BattleTest extends JFrame {
 		
-	JButton[][] button = new JButton[11][11];
+	JButton[][] button1 = new JButton[11][11];
+	JButton[][] button2 = new JButton[11][11];
 	int confirm = 0;
+	private int x;
+	private int y;
+	int i = 0 ;
+	int j = 0;
 	
 	public BattleTest() {
-		setVisible(true);  setSize(600, 400);
+		setVisible(true);  setSize(600, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		Boats_button toolbar = new Boats_button();
+		
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(11,11,1,1));
+		setContentPane(panel);
+		
+//		setLayout(new ());
+		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+		
+		JPanel panel1 = new JPanel(); 
+		panel1.setLayout(new GridLayout(11,11,1,1));
+				
+		JPanel panel2 = new JPanel();
+		panel2.setLayout(new GridLayout(11,11,1,1));
+		
+		panel.add(panel1);
+		panel.add(panel2);
+		panel2.setVisible(false);
 		
 		
-		fill_grid(button, panel);
-		add(toolbar, BorderLayout.SOUTH);
-		add(panel);
+		JButton btn = new JButton("CONFIRM");
+		Boats_button toolbar = new Boats_button(btn);
+		panel.add(toolbar, BorderLayout.SOUTH);
+		btn.addActionListener(e -> { confirm = 1 ; panel2.setVisible(true); toolbar.setVisible(false); playGame(button2); });
 		
-		for (int i = 0; i < button.length; i++) {
-			for (int j = 0; j < button.length; j++) {
-				button[i][j].addMouseListener(new ButtonMouseListener(button, i, j, confirm ));
-				button[i][j].setName(String.valueOf(0));
+
+		fill_grid(button1, panel1);
+		fill_grid(button2, panel2);
+		
+//		add(panel);
+		
+		for (int i = 0; i < button1.length; i++) {
+			for (int j = 0; j < button1.length; j++) {
+				button1[i][j].addMouseListener(new ButtonMouseListener(button1, i, j, confirm ));
+				button1[i][j].setName(String.valueOf(0));
 			}
 		}	
 //		print_matrix_values(button);
@@ -38,6 +66,49 @@ public class BattleTest extends JFrame {
 		
 	}
 	
+	private void playGame(JButton[][] btn) {
+		// TODO Auto-generated method stub
+		fill_bot(btn);	
+//		
+		for ( i = 0; i < btn.length; i++) {
+			for (j = 0; j < btn.length; j++) {
+				btn[i][j].putClientProperty("row", i);
+				btn[i][j].putClientProperty("column", j);
+				btn[i][j].addActionListener(new actionlistener() {
+					public void actionPerformed(ActionEvent e) {
+					JButton but = (JButton) e.getSource();
+//					System.out.println(but.getClientProperty("row") + " " + but.getClientProperty("column")); 
+					int x = (int) but.getClientProperty("row");
+					int y = (int) but.getClientProperty("column");
+					System.out.println(x + " " + y);
+					if(!btn[x][y].getName().equals("0")) btn[x][y].setBackground(Color.red);
+					}}
+				
+				);
+			}
+		}
+		
+	}
+
+	private void fill_bot(JButton[][] bot_ship) {
+		for (int i = 0; i < bot_ship.length; i++) 
+			for (int j = 0; j < bot_ship.length; j++) 
+				bot_ship[i][j].setName("0");
+			
+		//ship 5 
+		for(int i = 3 ; i < 8; i++)
+			bot_ship[i][3].setName("5");
+		//ship 4
+		for (int i = 1; i < 5; i++) {
+			bot_ship[1][i].setName("4");
+		}
+		
+		
+		
+		
+		
+	}
+
 	public int getconfirm() {
 		return confirm;
 	}
@@ -95,16 +166,6 @@ public class BattleTest extends JFrame {
 		}
 	}
 	
-	
-	public void get_bomb(int x , int y) {
-		if(!button[x][y].getName().equals("0")) {
-			button[x][y].setBackground(Color.RED);
-			System.out.println("hitted");
-		}
-	}
-
-
-	
-	
+//	public void 	
 	
 }

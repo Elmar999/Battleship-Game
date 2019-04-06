@@ -6,12 +6,15 @@ import javax.swing.JButton;
 import javax.swing.JPanel;;
 public class Boats_button extends JPanel{
 	
-	public Boats_button() {
+	private JButton btn ;
+	
+	public Boats_button(JButton button) {
 		JButton[] Boat = new JButton[5];
-		JButton btn = new JButton("CONFIRM");
-//		btn.setName("CONFIRM");
+		btn = button;
+////		btn.setName("CONFIRM");
 		create_boat_buttons(Boat);
-		add(btn);  btn.addMouseListener(new ButtonMouseListener());
+		add(btn);  
+//		btn.addMouseListener(new ButtonMouseListener());
 	}
 	
 

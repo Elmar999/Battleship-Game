@@ -12,16 +12,7 @@ public class Battle_main {
 		SwingUtilities.invokeLater(new Runnable(){
 			public void run() {
 				BattleTest setShip_Server = new BattleTest();
-				
-				while(setShip_Server.getconfirm() != 1) {
-					System.out.println("olmadi");
-				}
-				
-//				BattleTest Attack = new BattleTest();
-				
-				
-				
-				
+								
 	
 			}
 		});
