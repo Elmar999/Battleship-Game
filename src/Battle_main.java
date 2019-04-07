@@ -11,7 +11,7 @@ public class Battle_main {
 		
 		SwingUtilities.invokeLater(new Runnable(){
 			public void run() {
-				BattleTest setShip_Server = new BattleTest();
+				BattleTest setShip_user = new BattleTest();
 								
 	
 			}
