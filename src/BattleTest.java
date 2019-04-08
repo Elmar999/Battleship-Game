@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -76,14 +77,49 @@ public class BattleTest extends JFrame {
 				btn[i][j].putClientProperty("column", j);
 				btn[i][j].addActionListener(new actionlistener() {
 					public void actionPerformed(ActionEvent e) {
-					JButton but = (JButton) e.getSource();
-//					System.out.println(but.getClientProperty("row") + " " + but.getClientProperty("column")); 
-					int x = (int) but.getClientProperty("row");
-					int y = (int) but.getClientProperty("column");
-					System.out.println(x + " " + y);
-					if(!btn[x][y].getName().equals("0")) btn[x][y].setBackground(Color.red);
-					}}
-				
+						JButton but = (JButton) e.getSource();
+	//					System.out.println(but.getClientProperty("row") + " " + but.getClientProperty("column")); 
+						int x = (int) but.getClientProperty("row");
+						int y = (int) but.getClientProperty("column");
+						System.out.println(x + " " + y);
+						if(!btn[x][y].getName().equals("0")) btn[x][y].setBackground(Color.red);
+						else 
+							playBot(button1);
+					}
+					
+					
+						private void playBot(JButton[][] button1) {
+							int x = (int)(Math.random() * 10 + 1);
+							int y = (int)(Math.random() * 10 + 1);
+														
+							if(button1[x][y].getName().equals("0")) {
+								button1[x][y].setName("1");
+								sleep(2);
+								button1[x][y].setBackground(Color.white);
+							}
+							else if(!button1[x][y].getName().equals("0") && !button1[x][y].getName().equals("1")) {
+								button1[x][y].setBackground(Color.red);
+								sleep(2);
+								playBot(button1);
+							}
+							else if(button1[x][y].getName().equals("1")) {
+								sleep(2);
+								playBot(button1);
+							}
+							
+						}
+						
+						private void sleep(int i) {
+							// TODO Auto-generated method stub
+							try {
+								TimeUnit.SECONDS.sleep(2);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+			
+					}
 				);
 			}
 		}

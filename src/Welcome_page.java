@@ -38,7 +38,7 @@ public class Welcome_page extends JFrame {
 		JButton btnNewButton = new JButton("New button");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Battle_main.main(new String[]{});
+				Battle_main_user2.main(new String[]{});
 //				Battle_main_Server.main(new String[]{});
 				fr.dispose();
 			}
