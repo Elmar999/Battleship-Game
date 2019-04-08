@@ -35,10 +35,10 @@ public class Welcome_page extends JFrame {
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.NORTH);
 		
-		JButton btnNewButton = new JButton("New button");
+		JButton btnNewButton = new JButton("Game with Computer");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Battle_main_user2.main(new String[]{});
+				Battle_main_Bot.main(new String[]{});
 //				Battle_main_Server.main(new String[]{});
 				fr.dispose();
 			}

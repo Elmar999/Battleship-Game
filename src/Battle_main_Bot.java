@@ -1,29 +1,18 @@
 package src;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.swing.SwingUtilities;
 
-public class Battle_main_user2 {
+public class Battle_main_Bot {
 	public static void main(String[] args)
 	{
-		int confirm = 0;
-		
+		int bot = 0;
 		SwingUtilities.invokeLater(new Runnable(){
 			public void run() {
-				int user2 = 2;
-				BattleTest setShip_user = new BattleTest(2);
+				
+				BattleTest setShip_user = new BattleTest(bot);
 								
 	
 			}
 		});
 	}
 }
-	
-	
-	
-	
-	
-	
-	
-	

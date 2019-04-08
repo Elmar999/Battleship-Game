@@ -14,13 +14,14 @@ public class BattleTest extends JFrame {
 		
 	JButton[][] button1 = new JButton[11][11];
 	JButton[][] button2 = new JButton[11][11];
-	int confirm = 0;
-	private int x;
-	private int y;
-	int i = 0 ;
-	int j = 0;
+	private int confirm = 0;
+	private int rival ;
+//	private int x;
+//	private int y;
 	
-	public BattleTest() {
+	
+	public BattleTest(int rival) {
+		this.rival = rival;
 		setVisible(true);  setSize(600, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -45,7 +46,13 @@ public class BattleTest extends JFrame {
 		JButton btn = new JButton("CONFIRM");
 		Boats_button toolbar = new Boats_button(btn);
 		panel.add(toolbar, BorderLayout.SOUTH);
-		btn.addActionListener(e -> { confirm = 1 ; panel2.setVisible(true); toolbar.setVisible(false); playGame(button2); });
+		btn.addActionListener(e -> { confirm = 1 ; panel2.setVisible(true); toolbar.setVisible(false);
+			if(rival == 0)
+				playGameBot(button2);
+			else if(rival == 1)
+				launch_user1_server();
+			
+		});
 		
 
 		fill_grid(button1, panel1);
@@ -67,12 +74,16 @@ public class BattleTest extends JFrame {
 		
 	}
 	
-	private void playGame(JButton[][] btn) {
+	private void launch_user1_server() {
+				
+	}
+
+	private void playGameBot(JButton[][] btn) {
 		// TODO Auto-generated method stub
 		fill_bot(btn);	
 //		
-		for ( i = 0; i < btn.length; i++) {
-			for (j = 0; j < btn.length; j++) {
+		for (int i = 0; i < btn.length; i++) {
+			for (int j = 0; j < btn.length; j++) {
 				btn[i][j].putClientProperty("row", i);
 				btn[i][j].putClientProperty("column", j);
 				btn[i][j].addActionListener(new actionlistener() {
@@ -86,7 +97,6 @@ public class BattleTest extends JFrame {
 						else 
 							playBot(button1);
 					}
-					
 					
 						private void playBot(JButton[][] button1) {
 							int x = (int)(Math.random() * 10 + 1);
