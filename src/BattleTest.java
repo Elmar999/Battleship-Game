@@ -1,9 +1,16 @@
 package src;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.BoxLayout;
@@ -12,8 +19,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 public class BattleTest extends JFrame {
 		
-	JButton[][] button1 = new JButton[11][11];
-	JButton[][] button2 = new JButton[11][11];
+	JButton[][] user1 = new JButton[11][11];
+	JButton[][] user2 = new JButton[11][11];
+	JButton[][] bot2 = new JButton[11][11];
 	private int confirm = 0;
 	private int rival ;
 //	private int x;
@@ -48,24 +56,53 @@ public class BattleTest extends JFrame {
 		panel.add(toolbar, BorderLayout.SOUTH);
 		btn.addActionListener(e -> { confirm = 1 ; panel2.setVisible(true); toolbar.setVisible(false);
 			if(rival == 0)
-				playGameBot(button2);
+				playGameBot(bot2);
 			else if(rival == 1)
-				launch_user1_server();
+				try {
+					launch_user1_server(user1);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			else if(rival == 2)
+				try {
+					launch_user2_client(user2);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			
 		});
 		
-
-		fill_grid(button1, panel1);
-		fill_grid(button2, panel2);
-		
+		if(rival == 0) {
+			fill_grid(user1, panel1);
+			fill_grid(bot2, panel2);
+		}
+		else if(rival == 1) {
+			fill_grid(user1, panel1);
+			fill_grid(user2, panel2);
+		}
+		else if(rival == 2) {
+			fill_grid(user2, panel1);
+			fill_grid(user1, panel2); 
+		}
 //		add(panel);
-		
-		for (int i = 0; i < button1.length; i++) {
-			for (int j = 0; j < button1.length; j++) {
-				button1[i][j].addMouseListener(new ButtonMouseListener(button1, i, j, confirm ));
-				button1[i][j].setName(String.valueOf(0));
+		if(rival == 1) {
+			for (int i = 0; i < user1.length; i++) {
+				for (int j = 0; j < user1.length; j++) {
+					user1[i][j].addMouseListener(new ButtonMouseListener(user1, i, j, confirm ));
+					user1[i][j].setName(String.valueOf(0));
+				}
 			}
-		}	
+		}
+		else if(rival == 2) {
+			for (int i = 0; i < user2.length; i++) {
+				for (int j = 0; j < user2.length; j++) {
+					user2[i][j].addMouseListener(new ButtonMouseListener(user2, i, j, confirm ));
+					user2[i][j].setName(String.valueOf(0));
+				}
+			}
+		}
 //		print_matrix_values(button);
 		
 		
@@ -74,9 +111,62 @@ public class BattleTest extends JFrame {
 		
 	}
 	
-	private void launch_user1_server() {
-				
+	private void launch_user1_server(JButton[][] user1) throws IOException {
+		ServerSocket sersock = new ServerSocket(3999);
+	      System.out.println("Server  ready for chatting");
+	      Socket sock = sersock.accept( );                          
+	      // reading from keyboard (keyRead object)
+	      BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
+		  // sending to client (pwrite object)
+	      OutputStream ostream = sock.getOutputStream(); 
+	      PrintWriter pwrite = new PrintWriter(ostream, true);
+	 
+	      // receiving from server ( receiveRead  object)
+	      InputStream istream = sock.getInputStream();
+	      BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
+	 
+	      String receiveMessage, sendMessage;               
+	      while(true)
+	      {
+	        if((receiveMessage = receiveRead.readLine()) != null)  
+	        {
+	           System.out.println(receiveMessage);         
+	        }         
+	        sendMessage = keyRead.readLine(); 
+	        pwrite.println(sendMessage);             
+	        pwrite.flush();
+	      }               
+	   }                    
+	
+	
+	
+	private void launch_user2_client(JButton[][] user2) throws IOException {
+		Socket sock = new Socket("127.0.0.1", 3999);
+	     // reading from keyboard (keyRead object)
+	     BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
+	     // sending to client (pwrite object)
+	     OutputStream ostream = sock.getOutputStream(); 
+	     PrintWriter pwrite = new PrintWriter(ostream, true);
+	     
+	     // receiving from server ( receiveRead  object)
+	     InputStream istream = sock.getInputStream();
+	     BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
+	 
+	     System.out.println("Start the chitchat, type and press Enter key");
+	 
+	     String receiveMessage, sendMessage;               
+	     while(true)
+	     {
+	        sendMessage = keyRead.readLine();  // keyboard reading
+	        pwrite.println(sendMessage);       // sending to server
+	        pwrite.flush();                    // flush the data
+	        if((receiveMessage = receiveRead.readLine()) != null) //receive from server
+	        {
+	            System.out.println(receiveMessage); // displaying at DOS prompt
+	        }         
+	      }               
 	}
+	
 
 	private void playGameBot(JButton[][] btn) {
 		// TODO Auto-generated method stub
@@ -95,26 +185,26 @@ public class BattleTest extends JFrame {
 						System.out.println(x + " " + y);
 						if(!btn[x][y].getName().equals("0")) btn[x][y].setBackground(Color.red);
 						else 
-							playBot(button1);
+							playBot(user1);
 					}
 					
-						private void playBot(JButton[][] button1) {
+						private void playBot(JButton[][] user1) {
 							int x = (int)(Math.random() * 10 + 1);
 							int y = (int)(Math.random() * 10 + 1);
 														
-							if(button1[x][y].getName().equals("0")) {
-								button1[x][y].setName("1");
+							if(user1[x][y].getName().equals("0")) {
+								user1[x][y].setName("1");
 								sleep(2);
-								button1[x][y].setBackground(Color.white);
+								user1[x][y].setBackground(Color.white);
 							}
-							else if(!button1[x][y].getName().equals("0") && !button1[x][y].getName().equals("1")) {
-								button1[x][y].setBackground(Color.red);
+							else if(!user1[x][y].getName().equals("0") && !user1[x][y].getName().equals("1")) {
+								user1[x][y].setBackground(Color.red);
 								sleep(2);
-								playBot(button1);
+								playBot(user1);
 							}
-							else if(button1[x][y].getName().equals("1")) {
+							else if(user1[x][y].getName().equals("1")) {
 								sleep(2);
-								playBot(button1);
+								playBot(user1);
 							}
 							
 						}
