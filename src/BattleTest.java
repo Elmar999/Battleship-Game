@@ -3,6 +3,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +25,10 @@ public class BattleTest extends JFrame {
 	JButton[][] bot2 = new JButton[11][11];
 	private int confirm = 0;
 	private int rival ;
+	int sendMessage; static int count1 = 0 , count2 = 0;
+
+              
+
 //	private int x;
 //	private int y;
 	
@@ -57,16 +62,19 @@ public class BattleTest extends JFrame {
 		btn.addActionListener(e -> { confirm = 1 ; panel2.setVisible(true); toolbar.setVisible(false);
 			if(rival == 0)
 				playGameBot(bot2);
-			else if(rival == 1)
+			else if(rival == 1) {
 				try {
-					launch_user1_server(user1);
+					launch_user1_server(user2);
+					System.out.println("serveri qurdum");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+			}
 			else if(rival == 2)
 				try {
-					launch_user2_client(user2);
+					launch_user2_client(user1);
+					System.out.println("client quruldu");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -111,7 +119,7 @@ public class BattleTest extends JFrame {
 		
 	}
 	
-	private void launch_user1_server(JButton[][] user1) throws IOException {
+	private void launch_user1_server(JButton[][] user2) throws IOException {
 		ServerSocket sersock = new ServerSocket(3999);
 	      System.out.println("Server  ready for chatting");
 	      Socket sock = sersock.accept( );                          
@@ -124,23 +132,50 @@ public class BattleTest extends JFrame {
 	      // receiving from server ( receiveRead  object)
 	      InputStream istream = sock.getInputStream();
 	      BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
-	 
-	      String receiveMessage, sendMessage;               
-	      while(true)
-	      {
-	        if((receiveMessage = receiveRead.readLine()) != null)  
-	        {
-	           System.out.println(receiveMessage);         
-	        }         
-	        sendMessage = keyRead.readLine(); 
-	        pwrite.println(sendMessage);             
-	        pwrite.flush();
-	      }               
-	   }                    
+	      String receiveMessage;
+	      if(count1 == 0) {
+		    	 if((receiveMessage = receiveRead.readLine()) != null) //receive from server
+			        {
+			            System.out.println(receiveMessage); // displaying at DOS prompt
+			        }   
+		    	 count1++;
+		     }
+	      else {
+		      while(true)
+		      {	    	  
+		    	System.out.println("user1 gozduyur");
+		        if((receiveMessage = receiveRead.readLine()) != null)  
+		        {
+		           System.out.println(receiveMessage);         
+		        }
+		        for (int i = 0; i < user2.length; i++) {
+					for (int j = 0; j < user2.length; j++) {
+						user2[i][j].putClientProperty("row", i);
+						user2[i][j].putClientProperty("column", j);
+						user2[i][j].addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								JButton but = (JButton) e.getSource();
+								int x = (int) but.getClientProperty("row");
+								int y = (int) but.getClientProperty("column");
+								sendMessage = x;
+								 System.out.println("user1 gonder\n");
+							     System.out.println(sendMessage + "\n -------- ");
+							}
+						});
+					}
+				}
+	//	        sendMessage = keyRead.readLine(); 
+		       
+		        pwrite.println(sendMessage);             
+		        pwrite.flush();
+		      }        
+	      }
+	   }   //end of function                 
 	
 	
 	
-	private void launch_user2_client(JButton[][] user2) throws IOException {
+	private void launch_user2_client(JButton[][] user1) throws IOException {
 		Socket sock = new Socket("127.0.0.1", 3999);
 	     // reading from keyboard (keyRead object)
 	     BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
@@ -154,17 +189,45 @@ public class BattleTest extends JFrame {
 	 
 	     System.out.println("Start the chitchat, type and press Enter key");
 	 
-	     String receiveMessage, sendMessage;               
-	     while(true)
-	     {
-	        sendMessage = keyRead.readLine();  // keyboard reading
-	        pwrite.println(sendMessage);       // sending to server
-	        pwrite.flush();                    // flush the data
-	        if((receiveMessage = receiveRead.readLine()) != null) //receive from server
-	        {
-	            System.out.println(receiveMessage); // displaying at DOS prompt
-	        }         
-	      }               
+	     String receiveMessage;
+	     sendMessage = 10;
+	     
+	     
+	     if(count2 == 0) {
+	    	  pwrite.println(sendMessage);       // sending to server
+		      pwrite.flush();                    // flush the data
+	    	 count2++;
+	     }
+	     else {
+		     while(true)
+		     {
+		    	 System.out.println("user2 gozduyur");
+		    	 for (int i = 0; i < user1.length; i++) {
+						for (int j = 0; j < user1.length; j++) {
+							user1[i][j].putClientProperty("row", i);
+							user1[i][j].putClientProperty("column", j);
+							user1[i][j].addActionListener(new ActionListener() {
+								@Override
+								public void actionPerformed(ActionEvent e) {
+									JButton but = (JButton) e.getSource();
+									int x = (int) but.getClientProperty("row");
+									int y = (int) but.getClientProperty("column");
+									sendMessage = x;
+								}
+							});
+						 }
+		    	 }
+	//	        sendMessage = keyRead.readLine();  // keyboard reading
+		    	 System.out.println("user2 gonder\n");
+			     System.out.println(sendMessage + "\n -------- ");
+		        pwrite.println(sendMessage);       // sending to server
+		        pwrite.flush();                    // flush the data
+		        if((receiveMessage = receiveRead.readLine()) != null) //receive from server
+		        {
+		            System.out.println(receiveMessage); // displaying at DOS prompt
+		        }         
+		      }    
+	     }
 	}
 	
 

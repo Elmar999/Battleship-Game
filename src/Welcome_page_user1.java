@@ -18,6 +18,7 @@ public class Welcome_page_user1 extends JFrame {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
+//					fr1.setName("USER1");
 					fr1 =  new Welcome_page_user1();
 					fr1.setVisible(true);
 				} catch (Exception e) {
