@@ -51,24 +51,25 @@ public class BattleTest extends JFrame {
 				
 		JPanel panel2 = new JPanel();
 		panel2.setLayout(new GridLayout(11,11,1,1));
+		JButton btn = new JButton("CONFIRM");
+		Boats_button toolbar = new Boats_button(btn);
 		
 		panel.add(panel1);
 		panel.add(panel2);
-		panel2.setVisible(false);
-		
-		
-		JButton btn = new JButton("CONFIRM");
-		Boats_button toolbar = new Boats_button(btn);
+		panel2.setVisible(true);
 		panel.add(toolbar, BorderLayout.SOUTH);
-		btn.addActionListener(e -> { confirm = 1 ; panel2.setVisible(true); toolbar.setVisible(false);
+		
+		
+		
+		btn.addActionListener(e -> {  toolbar.setVisible(false);
 			if(rival == 0)
 				playGameBot(bot2);
 			else if(rival == 1) {
 				try {
 					launch_user1_server(user2);
-//					launch_user1_game();
+					launch_user1_game();
 					System.out.println("serveri qurdum");
-				} catch (IOException e1) {
+				} catch (IOException | InterruptedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
@@ -76,7 +77,7 @@ public class BattleTest extends JFrame {
 			else if(rival == 2)
 				try {
 					launch_user2_client(user1);
-//					launch_user2_game();
+					launch_user2_game();
 					System.out.println("client quruldu");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
@@ -133,16 +134,22 @@ public class BattleTest extends JFrame {
 	}
 	
 	private void launch_user1_game() throws IOException, InterruptedException {
+		
+		 	 System.out.println("user1_game launched\n");
+		     Socket sock = new Socket("127.0.0.1", 3999);
+		     System.out.println("game runs\n");
+		     BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
+		     OutputStream ostream = sock.getOutputStream(); 
+		     PrintWriter pwrite = new PrintWriter(ostream, true);
+		     InputStream istream = sock.getInputStream();
+		     BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));	 
+		     
+	     int count = 0;
+	     pwrite.println(sendMessage);             
+		 pwrite.flush();
 		while(true)
-	      {	    	  
-	    	System.out.println("user1 gozduyur");
-		    InputStream istream = sock.getInputStream();
-	    	if(receiveRead == null)
-	    		receiveRead = new BufferedReader(new InputStreamReader(istream));
-	        if((receiveMessage = receiveRead.readLine()) != null)  
-	        {
-	           System.out.println(receiveMessage);         
-	        }
+	      {	    	
+			 
 	        for (int i = 0; i < user2.length; i++) {
 				for (int j = 0; j < user2.length; j++) {
 					user2[i][j].putClientProperty("row", i);
@@ -153,26 +160,56 @@ public class BattleTest extends JFrame {
 							JButton but = (JButton) e.getSource();
 							int x = (int) but.getClientProperty("row");
 							int y = (int) but.getClientProperty("column");
+							 String receiveMessage;
 							sendMessage = x;
 						    System.out.println("user1 sends a message: " + sendMessage);
+						    pwrite.println(sendMessage);             
+							pwrite.flush();
+							 try {
+								while((receiveMessage = receiveRead.readLine()) != null)  
+								 {
+									if((receiveMessage = receiveRead.readLine()) != null) 
+									{	System.out.println("user1 is received a msg: " + receiveMessage); 
+										break;
+									}
+								 }
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 						}
 					});
 				}
-			}
-//	        sendMessage = keyRead.readLine(); 
+			}      
 	       
-	        pwrite.println(sendMessage);             
-	        pwrite.flush();
+	        count++;
+	        if(count == 1) {
+	        	
+	        	break;
+	        }
 	      }        
 		
 	}
 
 	private void launch_user2_game() throws IOException {
 
+	   
+	     ServerSocket sersock = new ServerSocket(3999);
+		 Socket sock = sersock.accept( );                          
+		 BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
+	     OutputStream ostream = sock.getOutputStream(); 
+	     PrintWriter pwrite = new PrintWriter(ostream, true);
+	     InputStream istream = sock.getInputStream();
+	     BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
 	     String receiveMessage;
-
-	     while(true){
-	    	 System.out.println("user2 gozduyur");
+	     receiveRead = new BufferedReader(new InputStreamReader(istream));     
+//	     while((receiveMessage = receiveRead.readLine()) == null) //receive from server
+//	    	 if((receiveMessage = receiveRead.readLine()) != null) {
+//	  		   System.out.println(receiveMessage); // displaying at DOS prompt
+//	  		   break;
+//	    	 }
+	  	while(true){
+//	    	 System.out.println("user2 gozduyur");
 	    	 for (int i = 0; i < user1.length; i++) {
 					for (int j = 0; j < user1.length; j++) {
 						user1[i][j].putClientProperty("row", i);
@@ -184,19 +221,30 @@ public class BattleTest extends JFrame {
 								int x = (int) but.getClientProperty("row");
 								int y = (int) but.getClientProperty("column");
 								sendMessage = x;
+								System.out.println("user2 sends a message: " +sendMessage +"\n");
+								 pwrite.println(sendMessage);       // sending to server
+							     pwrite.flush();  
+							     
 							}
 						});
 					 }
 	    	 }
+	    	 
+	    	int count=0;
 	//	        sendMessage = keyRead.readLine();  // keyboard reading
-		    	 System.out.println("user2 gonder\n");
-			     System.out.println("message sent: " + sendMessage);
-		        pwrite.println(sendMessage);       // sending to server
-		        pwrite.flush();                    // flush the data
-		        if((receiveMessage = receiveRead.readLine()) != null) //receive from server
-		        {
-		            System.out.println(receiveMessage); // displaying at DOS prompt
-		        }         
+//		    	 System.out.println("user2 gonderir\n");
+		                        // flush the data
+		        while((receiveMessage = receiveRead.readLine()) == null) //receive from server
+			    	 if((receiveMessage = receiveRead.readLine()) != null) {
+			  		   System.out.println("message came in user2 : " + receiveMessage); // displaying at DOS prompt
+			  		   break;
+			    	 }
+		       
+		        count++;
+		        if(count == 1) {
+		        	
+		        	break;
+		        }
 	      }    		
 	}
 
@@ -213,42 +261,41 @@ public class BattleTest extends JFrame {
 	      // receiving from server ( receiveRead  object)
 	      InputStream istream = sock.getInputStream();
 	      BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
-//	      System.out.println("Buffer created");
 	      String receiveMessage;
-	      if(count1 == 0) {
-		    if((receiveMessage = receiveRead.readLine()) != null) { //receive from server
-			   System.out.println("server received a message: " + receiveMessage); // displaying at DOS prompt
-			}   
-		    count1++;
-		  }
+	      System.out.println("waiting for response in user1\n");
+	      
+	      if((receiveMessage = receiveRead.readLine()) != null) { //receive from server
+			 System.out.println("server received a message: " + receiveMessage); // displaying at DOS prompt
+		  }   
+	      
+	      System.out.println("response arrived in user1\n");
+		  
+	      
+	      sersock.close();
+	      sock.close();
+	      
 	   }   //end of function                 
 	
 	
 	
 	private void launch_user2_client(JButton[][] user1) throws IOException {
-		Socket sock = new Socket("127.0.0.1", 3999);
-	     // reading from keyboard (keyRead object)
+		 Socket sock = new Socket("127.0.0.1", 3999);
 	     BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
-	     // sending to client (pwrite object)
 	     OutputStream ostream = sock.getOutputStream(); 
 	     PrintWriter pwrite = new PrintWriter(ostream, true);
 	     
-	     // receiving from server ( receiveRead  object)
 	     InputStream istream = sock.getInputStream();
 	     BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
 	 
 	     System.out.println("Client-Server connection is ready");
 	 
 	     String receiveMessage;
-	     sendMessage = 10;
-	     
-	     
-	     if(count2 == 0) {
-	    	  pwrite.println(sendMessage);       // sending to server
-		      pwrite.flush();                    // flush the data
-	    	 count2++;
-	     }
-//	     }
+	     sendMessage = 5;
+    	 pwrite.println(sendMessage);       // sending to server
+         pwrite.flush();                   // flush the data
+         sock.close();
+		
+
 	}
 	
 
