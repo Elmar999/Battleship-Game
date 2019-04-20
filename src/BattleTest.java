@@ -26,12 +26,13 @@ public class BattleTest extends JFrame {
 	private int confirm = 0;
 	private int rival ;
 	int sendMessage; static int count1 = 0 , count2 = 0;
+	ServerSocket sersock ;  Socket sock;  BufferedReader keyRead;
+	OutputStream ostream;	PrintWriter pwrite; InputStream istream;
+	BufferedReader receiveRead;
+	String receiveMessage ;
 
-              
-
-//	private int x;
-//	private int y;
 	
+
 	
 	public BattleTest(int rival) {
 		this.rival = rival;
@@ -65,6 +66,7 @@ public class BattleTest extends JFrame {
 			else if(rival == 1) {
 				try {
 					launch_user1_server(user2);
+//					launch_user1_game();
 					System.out.println("serveri qurdum");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
@@ -74,6 +76,7 @@ public class BattleTest extends JFrame {
 			else if(rival == 2)
 				try {
 					launch_user2_client(user1);
+//					launch_user2_game();
 					System.out.println("client quruldu");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
@@ -95,7 +98,17 @@ public class BattleTest extends JFrame {
 			fill_grid(user1, panel2); 
 		}
 //		add(panel);
-		if(rival == 1) {
+		
+		
+		if (rival == 0) {
+			for (int i = 0; i < user1.length; i++) {
+				for (int j = 0; j < user1.length; j++) {
+					user1[i][j].addMouseListener(new ButtonMouseListener(user1, i, j, confirm ));
+					user1[i][j].setName(String.valueOf(0));
+				}
+			}
+		}
+		else if(rival == 1) {
 			for (int i = 0; i < user1.length; i++) {
 				for (int j = 0; j < user1.length; j++) {
 					user1[i][j].addMouseListener(new ButtonMouseListener(user1, i, j, confirm ));
@@ -119,6 +132,74 @@ public class BattleTest extends JFrame {
 		
 	}
 	
+	private void launch_user1_game() throws IOException, InterruptedException {
+		while(true)
+	      {	    	  
+	    	System.out.println("user1 gozduyur");
+		    InputStream istream = sock.getInputStream();
+	    	if(receiveRead == null)
+	    		receiveRead = new BufferedReader(new InputStreamReader(istream));
+	        if((receiveMessage = receiveRead.readLine()) != null)  
+	        {
+	           System.out.println(receiveMessage);         
+	        }
+	        for (int i = 0; i < user2.length; i++) {
+				for (int j = 0; j < user2.length; j++) {
+					user2[i][j].putClientProperty("row", i);
+					user2[i][j].putClientProperty("column", j);
+					user2[i][j].addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							JButton but = (JButton) e.getSource();
+							int x = (int) but.getClientProperty("row");
+							int y = (int) but.getClientProperty("column");
+							sendMessage = x;
+						    System.out.println("user1 sends a message: " + sendMessage);
+						}
+					});
+				}
+			}
+//	        sendMessage = keyRead.readLine(); 
+	       
+	        pwrite.println(sendMessage);             
+	        pwrite.flush();
+	      }        
+		
+	}
+
+	private void launch_user2_game() throws IOException {
+
+	     String receiveMessage;
+
+	     while(true){
+	    	 System.out.println("user2 gozduyur");
+	    	 for (int i = 0; i < user1.length; i++) {
+					for (int j = 0; j < user1.length; j++) {
+						user1[i][j].putClientProperty("row", i);
+						user1[i][j].putClientProperty("column", j);
+						user1[i][j].addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								JButton but = (JButton) e.getSource();
+								int x = (int) but.getClientProperty("row");
+								int y = (int) but.getClientProperty("column");
+								sendMessage = x;
+							}
+						});
+					 }
+	    	 }
+	//	        sendMessage = keyRead.readLine();  // keyboard reading
+		    	 System.out.println("user2 gonder\n");
+			     System.out.println("message sent: " + sendMessage);
+		        pwrite.println(sendMessage);       // sending to server
+		        pwrite.flush();                    // flush the data
+		        if((receiveMessage = receiveRead.readLine()) != null) //receive from server
+		        {
+		            System.out.println(receiveMessage); // displaying at DOS prompt
+		        }         
+	      }    		
+	}
+
 	private void launch_user1_server(JButton[][] user2) throws IOException {
 		ServerSocket sersock = new ServerSocket(3999);
 	      System.out.println("Server  ready for chatting");
@@ -132,45 +213,14 @@ public class BattleTest extends JFrame {
 	      // receiving from server ( receiveRead  object)
 	      InputStream istream = sock.getInputStream();
 	      BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
+//	      System.out.println("Buffer created");
 	      String receiveMessage;
 	      if(count1 == 0) {
-		    	 if((receiveMessage = receiveRead.readLine()) != null) //receive from server
-			        {
-			            System.out.println(receiveMessage); // displaying at DOS prompt
-			        }   
-		    	 count1++;
-		     }
-	      else {
-		      while(true)
-		      {	    	  
-		    	System.out.println("user1 gozduyur");
-		        if((receiveMessage = receiveRead.readLine()) != null)  
-		        {
-		           System.out.println(receiveMessage);         
-		        }
-		        for (int i = 0; i < user2.length; i++) {
-					for (int j = 0; j < user2.length; j++) {
-						user2[i][j].putClientProperty("row", i);
-						user2[i][j].putClientProperty("column", j);
-						user2[i][j].addActionListener(new ActionListener() {
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								JButton but = (JButton) e.getSource();
-								int x = (int) but.getClientProperty("row");
-								int y = (int) but.getClientProperty("column");
-								sendMessage = x;
-								 System.out.println("user1 gonder\n");
-							     System.out.println(sendMessage + "\n -------- ");
-							}
-						});
-					}
-				}
-	//	        sendMessage = keyRead.readLine(); 
-		       
-		        pwrite.println(sendMessage);             
-		        pwrite.flush();
-		      }        
-	      }
+		    if((receiveMessage = receiveRead.readLine()) != null) { //receive from server
+			   System.out.println("server received a message: " + receiveMessage); // displaying at DOS prompt
+			}   
+		    count1++;
+		  }
 	   }   //end of function                 
 	
 	
@@ -187,7 +237,7 @@ public class BattleTest extends JFrame {
 	     InputStream istream = sock.getInputStream();
 	     BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
 	 
-	     System.out.println("Start the chitchat, type and press Enter key");
+	     System.out.println("Client-Server connection is ready");
 	 
 	     String receiveMessage;
 	     sendMessage = 10;
@@ -198,36 +248,7 @@ public class BattleTest extends JFrame {
 		      pwrite.flush();                    // flush the data
 	    	 count2++;
 	     }
-	     else {
-		     while(true)
-		     {
-		    	 System.out.println("user2 gozduyur");
-		    	 for (int i = 0; i < user1.length; i++) {
-						for (int j = 0; j < user1.length; j++) {
-							user1[i][j].putClientProperty("row", i);
-							user1[i][j].putClientProperty("column", j);
-							user1[i][j].addActionListener(new ActionListener() {
-								@Override
-								public void actionPerformed(ActionEvent e) {
-									JButton but = (JButton) e.getSource();
-									int x = (int) but.getClientProperty("row");
-									int y = (int) but.getClientProperty("column");
-									sendMessage = x;
-								}
-							});
-						 }
-		    	 }
-	//	        sendMessage = keyRead.readLine();  // keyboard reading
-		    	 System.out.println("user2 gonder\n");
-			     System.out.println(sendMessage + "\n -------- ");
-		        pwrite.println(sendMessage);       // sending to server
-		        pwrite.flush();                    // flush the data
-		        if((receiveMessage = receiveRead.readLine()) != null) //receive from server
-		        {
-		            System.out.println(receiveMessage); // displaying at DOS prompt
-		        }         
-		      }    
-	     }
+//	     }
 	}
 	
 
