@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.BoxLayout;
@@ -31,9 +32,6 @@ public class BattleTest extends JFrame {
 	BufferedReader receiveRead;
 	String receiveMessage ;
 
-	
-
-	
 	public BattleTest(int rival) {
 		this.rival = rival;
 		setVisible(true);  setSize(600, 600);
@@ -142,7 +140,8 @@ public class BattleTest extends JFrame {
 		     OutputStream ostream = sock.getOutputStream(); 
 		     PrintWriter pwrite = new PrintWriter(ostream, true);
 		     InputStream istream = sock.getInputStream();
-		     BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));	 
+		     BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));	
+
 		     
 	     int count = 0;
 	     pwrite.println(sendMessage);             
@@ -160,23 +159,44 @@ public class BattleTest extends JFrame {
 							JButton but = (JButton) e.getSource();
 							int x = (int) but.getClientProperty("row");
 							int y = (int) but.getClientProperty("column");
-							 String receiveMessage;
-							sendMessage = x;
-						    System.out.println("user1 sends a message: " + sendMessage);
+							String sendMessage = " ";
+							int sendMessageX = x;
+							int sendMessageY = y;
+
+							sendMessage = Integer.toString(sendMessageX);
+							sendMessage+= " ";
+							sendMessage += Integer.toString(sendMessageY);
+
+						    StringTokenizer st ;
+							String receiveMessage;
+							int index_x = 0 , index_y = 0;
 						    pwrite.println(sendMessage);             
 							pwrite.flush();
-							 try {
-								while((receiveMessage = receiveRead.readLine()) != null)  
-								 {
-									if((receiveMessage = receiveRead.readLine()) != null) 
-									{	System.out.println("user1 is received a msg: " + receiveMessage); 
-										break;
-									}
-								 }
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
+						    System.out.println("user1 sends a message: " + sendMessage);
+
+							
+											try {
+												if((receiveMessage = receiveRead.readLine()) != null) {
+													int count = 0;
+													System.out.println("user1 is received a msg: " + receiveMessage); 
+													st = new StringTokenizer(receiveMessage," "); 
+													   while (st.hasMoreTokens()) {  
+														   if(count == 0) {
+															   index_x = Integer.parseInt(st.nextToken());  
+															   count++;
+														   }
+														   else {
+															   index_y = Integer.parseInt(st.nextToken());  
+														   }
+														}  
+													  if(!user1[index_x][index_y].getName().equals("0"))
+														  user1[index_x][index_y].setBackground(Color.red);
+												}
+											} catch (IOException e1) {
+												// TODO Auto-generated catch block
+												e1.printStackTrace();
+											}
+								 
 						}
 					});
 				}
@@ -201,16 +221,9 @@ public class BattleTest extends JFrame {
 	     PrintWriter pwrite = new PrintWriter(ostream, true);
 	     InputStream istream = sock.getInputStream();
 	     BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
-	     String receiveMessage;
-	     receiveRead = new BufferedReader(new InputStreamReader(istream));     
-//	     while((receiveMessage = receiveRead.readLine()) == null) //receive from server
-//	    	 if((receiveMessage = receiveRead.readLine()) != null) {
-//	  		   System.out.println(receiveMessage); // displaying at DOS prompt
-//	  		   break;
-//	    	 }
-	  	while(true){
-//	    	 System.out.println("user2 gozduyur");
-	    	 for (int i = 0; i < user1.length; i++) {
+
+	     while(true){
+	    	 	for (int i = 0; i < user1.length; i++) {
 					for (int j = 0; j < user1.length; j++) {
 						user1[i][j].putClientProperty("row", i);
 						user1[i][j].putClientProperty("column", j);
@@ -220,45 +233,63 @@ public class BattleTest extends JFrame {
 								JButton but = (JButton) e.getSource();
 								int x = (int) but.getClientProperty("row");
 								int y = (int) but.getClientProperty("column");
-								sendMessage = x;
-								System.out.println("user2 sends a message: " +sendMessage +"\n");
+								String sendMessage = " ";
+								String receiveMessage = " ";
+								int sendMessageX = x;
+								int sendMessageY = y;
+
+								sendMessage = Integer.toString(sendMessageX);
+								sendMessage+= " ";
+								sendMessage += Integer.toString(sendMessageY);
+								
+								 StringTokenizer st ;
+								 int index_x = 0 , index_y = 0;
+								System.out.println("user2 sends a message: " + sendMessage);
 								 pwrite.println(sendMessage);       // sending to server
-							     pwrite.flush();  
-							     
+							     pwrite.flush(); 
+										
+											try {
+												if((receiveMessage = receiveRead.readLine()) != null) 
+												{
+													int count = 0;
+													System.out.print("user2 is received a msg: " + receiveMessage +" "); 
+													st = new StringTokenizer(receiveMessage," "); 
+												   while (st.hasMoreTokens()) {  
+													   if(count == 0) {
+														   index_x = Integer.parseInt(st.nextToken());  
+														   count++;
+													   }
+													   else {
+														   index_y = Integer.parseInt(st.nextToken());  
+													   }
+													}  
+												  if(!user2[index_x][index_y].getName().equals("0"))
+													  user2[index_x][index_y].setBackground(Color.red);
+
+												}
+											} catch (IOException e1) {
+												// TODO Auto-generated catch block
+												e1.printStackTrace();
+											}
 							}
 						});
 					 }
 	    	 }
 	    	 
-	    	int count=0;
-	//	        sendMessage = keyRead.readLine();  // keyboard reading
-//		    	 System.out.println("user2 gonderir\n");
-		                        // flush the data
-		        while((receiveMessage = receiveRead.readLine()) == null) //receive from server
-			    	 if((receiveMessage = receiveRead.readLine()) != null) {
-			  		   System.out.println("message came in user2 : " + receiveMessage); // displaying at DOS prompt
-			  		   break;
-			    	 }
-		       
-		        count++;
-		        if(count == 1) {
-		        	
-		        	break;
-		        }
+	    	 int count=0;
+		     count++;
+		     if(count == 1)
+		    	 break;
 	      }    		
 	}
 
 	private void launch_user1_server(JButton[][] user2) throws IOException {
 		ServerSocket sersock = new ServerSocket(3999);
 	      System.out.println("Server  ready for chatting");
-	      Socket sock = sersock.accept( );                          
-	      // reading from keyboard (keyRead object)
+	      Socket sock = sersock.accept();                          
 	      BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
-		  // sending to client (pwrite object)
 	      OutputStream ostream = sock.getOutputStream(); 
 	      PrintWriter pwrite = new PrintWriter(ostream, true);
-	 
-	      // receiving from server ( receiveRead  object)
 	      InputStream istream = sock.getInputStream();
 	      BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
 	      String receiveMessage;

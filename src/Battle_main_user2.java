@@ -12,7 +12,6 @@ public class Battle_main_user2 {
 				int user2 = 2;
 				BattleTest setShip_user = new BattleTest(2);
 								
-	
 			}
 		});
 	}
