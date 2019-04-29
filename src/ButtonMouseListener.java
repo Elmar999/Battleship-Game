@@ -9,17 +9,20 @@ import javax.swing.JButton;
 
 
 public class ButtonMouseListener implements MouseListener{
-	private static int ass = 0;
+	
+	/* we utilised static variables to make 
+	 * them seemable for all objects from this class */
+	
+	
 	private static JButton[][] button;
 	private int x , y;
 	private int boat_number;
-	private static int horizontal = 0;
-	private static int vertical = 0;
+	private static int horizontal = 0; // used for to manage if ship will be horizontal
+	private static int vertical = 0; // used for to manage if ship will be horizontal
 	private static int counter = 0;
-	private int confirmed = 0;
-	static int finished = 0;
+	private int confirmed = 0; // to check confirmation button
+	static int finished = 0; 
 	static int count = 0;
-	int confirm;
 	
 	public int check_if_finished(JButton[][] btn) {
 		int count=0;
@@ -44,11 +47,6 @@ public class ButtonMouseListener implements MouseListener{
 		return button;
 	}
 	
-
-	public ButtonMouseListener() {
-		confirmed = 1;
-	}
-
 	public void print_matrix_values(JButton[][] btn) {
 		for (int i = 0; i < btn.length; i++) {
 			for (int j = 0; j < btn[i].length; j++) {
@@ -90,8 +88,6 @@ public class ButtonMouseListener implements MouseListener{
 			}
 		}
 		
-//		System.out.println(count);
-
 		
 		if(count%boat_number == 0) {
 			counter = 0;
@@ -99,7 +95,8 @@ public class ButtonMouseListener implements MouseListener{
 		}
 		
 		
-		if(count == boat_number*get_number_of_boat(boat_number)) 
+		//check if all cell used for selected ship number
+		if(count == boat_number*get_number_of_boat(boat_number))  
 			return 0;
 		
 		return 1;
@@ -137,20 +134,17 @@ public class ButtonMouseListener implements MouseListener{
 			counter++;
 			return ;
 		}
-//		System.out.println("horizontal: " + horizontal + "\n" + "vertical: " + vertical);
-		
+	
 		if(horizontal == 1) {
 			if(check_H_or_V(btn ,x ,y) == 0) { 	
 				btn[x][y].setName(String.valueOf(boat_number));
 				btn[x][y].setBackground(Color.BLACK);
-//				System.out.println("horizontal");
 			}
 		}
 		else if(vertical == 1) {
 			if(check_H_or_V(btn ,x ,y) == 1) {
 				btn[x][y].setName(String.valueOf(boat_number));
 				btn[x][y].setBackground(Color.BLACK);
-//				System.out.println("vertical");
 			}
 		}
 		
@@ -172,7 +166,6 @@ public class ButtonMouseListener implements MouseListener{
 		int diff = 0;
 		if( (btn[x][y+1].getName().equals("0")) && (btn[x][y-1].getName().equals("0")) && (btn[x+1][y].getName().equals("0")) 	&& (btn[x-1][y].getName().equals("0")) )
 				return 1;
-		//if neighbours are not free( 0 )
 		return 0;
 	}
 	
@@ -180,25 +173,18 @@ public class ButtonMouseListener implements MouseListener{
 
 	@Override
 	public void mouseClicked(MouseEvent e ) {
-		int nmb = 6;
 		JButton[][] button_rival = new JButton[11][11];
 		BoatMouseListener btn = new BoatMouseListener();
 		int bt = btn.get_boat_number();
 			if(confirmed == 1) {
-				System.out.println("kecek bota?");
+				System.out.println("pass to bot");
 			}
 		else {
 			System.out.println(bt);
 			show_hitted(button, x, y , bt);
 		}
 	}
-	
-	
-	
-	public void Launch_boat() {
-		button[5][5].setName("5");
-	}
-	
+		
 	public void set_boat_number(int boat_number) {
 		this.boat_number = boat_number;
 	}

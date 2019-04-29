@@ -65,6 +65,7 @@ public class BattleTest extends JFrame {
 				playGameBot(bot2);
 			else if(rival == 1) {
 				try {
+					/* launching server itself and then starting the game for player 2 */
 					launch_user1_server(user2);
 					launch_user1_game();
 					System.out.println("server established");
@@ -74,6 +75,7 @@ public class BattleTest extends JFrame {
 			}
 			else if(rival == 2)
 				try {
+					/* launching client itself and then starting the game for player 1 */
 					launch_user2_client(user1);
 					launch_user2_game();
 					System.out.println("client created");
@@ -96,6 +98,8 @@ public class BattleTest extends JFrame {
 			fill_grid(user1, panel2); 
 		}
 		
+		
+		/* adding mouselistener for each button in each stage for grids to place the ships */
 		
 		if (rival == 0) {
 			for (int i = 0; i < user1.length; i++) {
@@ -125,6 +129,9 @@ public class BattleTest extends JFrame {
 	
 	private void launch_user1_game() throws IOException, InterruptedException {
 		
+			/* we will establish server with given functions 
+			 * which refers to socket programming in java  */
+		
 		 	 System.out.println("user1_game launched\n");
 		     Socket sock = new Socket("127.0.0.1", 3999);
 		     System.out.println("game runs\n");
@@ -136,15 +143,13 @@ public class BattleTest extends JFrame {
 		     InputStream istream = sock.getInputStream();
 		     BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));	
 
-		 String sendMessage = " ";
 	     int count = 0;
 	     if(tmp == 0) {
 	    	 byte[][] array = new byte[11][11];
-	    	 for (int i = 1; i < array.length; i++) {
-				for (int j = 0; j < array.length; j++) {
+	    	 for (int i = 1; i < array.length; i++) 
+				for (int j = 0; j < array.length; j++) 
 					array[i][j] = (byte)Integer.parseInt(user1[i][j].getName());
-				}
-			}
+				
 	    	 os.writeObject(array);
 	    	 tmp = 1;
 	     }
@@ -157,7 +162,6 @@ public class BattleTest extends JFrame {
 	     
 		while(true)
 	      {	    	
-			 
 	        for (int i = 0; i < user2.length; i++) {
 				for (int j = 0; j < user2.length; j++) {
 					user2[i][j].putClientProperty("row", i);
@@ -169,29 +173,27 @@ public class BattleTest extends JFrame {
 							int x = (int) but.getClientProperty("row");
 							int y = (int) but.getClientProperty("column");
 							
-						    StringTokenizer st ;
+						    StringTokenizer st ; // used to split the message which come from another opponent 
 							String receiveMessage;
 							int index_x = 0 , index_y = 0;
 							
-							
-						    
 						    try {
 						    				if (first_step == 0) {
 						    					send_message(x , y);
 						    					first_step = 1;
 						    				}
 						    				if(array_user1[x][y] != 0) {
-												user2[x][y].setBackground(Color.red);
+												user2[x][y].setBackground(Color.red); // if hitted 
 											}
 						    				else if(array_user1[x][y] == 0) {
-						    					user2[x][y].setBackground(Color.black);
+						    					user2[x][y].setBackground(Color.black); //  if not
 						    				}
 										    if((receiveMessage = receiveRead.readLine()) != null) {							
-													
 													System.out.println("user1 is received a msg: " + receiveMessage); 
 													st = new StringTokenizer(receiveMessage," "); 
 												    index_x = Integer.parseInt(st.nextToken());  
 													index_y = Integer.parseInt(st.nextToken());  
+													/* if my ship was hitten make the cell red */
 													if(!user1[index_x][index_y].getName().equals("0")) {
 												        user1[index_x][index_y].setBackground(Color.red);
 													}
@@ -208,11 +210,11 @@ public class BattleTest extends JFrame {
 							int sendMessageX = x;
 							int sendMessageY = y;
 							String sendMessage = " ";
-							
 							sendMessage = Integer.toString(sendMessageX);
 							sendMessage+= " ";
 							sendMessage += Integer.toString(sendMessageY);
-
+							
+							/* send hitten cell with indexes to opponent */							
 						    System.out.println("user1 sends a message: " + sendMessage);
 							pwrite.println(sendMessage);             
 							pwrite.flush();
@@ -223,17 +225,13 @@ public class BattleTest extends JFrame {
 			}      
 	       
 	        count++;
-	        if(count == 1) {
-	        	
+	        if(count == 1)
 	        	break;
-	        }
 	      }        
 		
 	}
 
-	private void launch_user2_game() throws IOException {
-
-	   
+	private void launch_user2_game() throws IOException {		
 	     ServerSocket sersock = new ServerSocket(3999);
 		 Socket sock = sersock.accept( );                          
 		 BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
@@ -300,7 +298,6 @@ public class BattleTest extends JFrame {
 												
 												
 											} catch (IOException e1) {
-												// TODO Auto-generated catch block
 												e1.printStackTrace();
 											}
 							}
@@ -391,8 +388,8 @@ public class BattleTest extends JFrame {
 						System.out.println(x + " " + y);
 						if(!btn[x][y].getName().equals("0")) btn[x][y].setBackground(Color.red);
 						else {
-							playBot(user1);
 							btn[x][y].setBackground(Color.black);
+							playBot(user1);
 						}
 					}
 					
@@ -446,7 +443,15 @@ public class BattleTest extends JFrame {
 		for (int i = 1; i < 5; i++) {
 			bot_ship[1][i].setName("4");
 		}
-		
+		for (int i = 3; i < 6; i++) {
+			bot_ship[7][i].setName("3");
+		}
+		for (int i = 2; i < 5; i++) {
+			bot_ship[9][i].setName("3");
+		}
+		for (int i = 4; i < 6; i++) {
+			bot_ship[i][9].setName("2");
+		}
 		
 		
 		
