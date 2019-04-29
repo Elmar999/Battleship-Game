@@ -36,7 +36,9 @@ public class BattleTest extends JFrame {
 		setVisible(true);  setSize(600, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-				
+		/* we add two panel for hitting opponent and putting the ships and 
+		 * a toolbar to select the ships		
+		 */
 		
 		JPanel panel = new JPanel();
 		setContentPane(panel);
@@ -65,9 +67,8 @@ public class BattleTest extends JFrame {
 				try {
 					launch_user1_server(user2);
 					launch_user1_game();
-					System.out.println("serveri established");
+					System.out.println("server established");
 				} catch (IOException | InterruptedException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
@@ -77,7 +78,6 @@ public class BattleTest extends JFrame {
 					launch_user2_game();
 					System.out.println("client created");
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			
