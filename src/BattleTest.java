@@ -8,6 +8,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -26,9 +28,9 @@ public class BattleTest extends JFrame {
 	JButton[][] bot2 = new JButton[11][11];
 	private int confirm = 0;
 	private int rival ;
-	int sendMessage; static int count1 = 0 , count2 = 0;
-	static int prev_index_x , prev_index_y , receive_hit = 0 , send_hit = 0;
-	
+	static int count1 = 0 , count2 = 0;
+	static int prev_index_x , prev_index_y , receive_hit = 0 , send_hit = 0;static int first_step = 0;
+	static int tmp = 0; static byte[][] array_user1;
 	
 	public BattleTest(int rival) {
 		this.rival = rival;
@@ -128,14 +130,31 @@ public class BattleTest extends JFrame {
 		     System.out.println("game runs\n");
 		     BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
 		     OutputStream ostream = sock.getOutputStream(); 
+		     ObjectOutputStream os = new ObjectOutputStream(sock.getOutputStream());
+		     ObjectInputStream is = new ObjectInputStream(sock.getInputStream());
 		     PrintWriter pwrite = new PrintWriter(ostream, true);
 		     InputStream istream = sock.getInputStream();
 		     BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));	
 
-		     
+		 String sendMessage = " ";
 	     int count = 0;
-	     pwrite.println(sendMessage);             
-		 pwrite.flush();
+	     if(tmp == 0) {
+	    	 byte[][] array = new byte[11][11];
+	    	 for (int i = 1; i < array.length; i++) {
+				for (int j = 0; j < array.length; j++) {
+					array[i][j] = (byte)Integer.parseInt(user1[i][j].getName());
+				}
+			}
+	    	 os.writeObject(array);
+	    	 tmp = 1;
+	     }
+	     
+	     try {
+			array_user1 = (byte[][])is.readObject();
+		} catch (ClassNotFoundException e2) {
+			e2.printStackTrace();
+		}
+	     
 		while(true)
 	      {	    	
 			 
@@ -149,54 +168,34 @@ public class BattleTest extends JFrame {
 							JButton but = (JButton) e.getSource();
 							int x = (int) but.getClientProperty("row");
 							int y = (int) but.getClientProperty("column");
-							String sendMessage = " ";
 							
 						    StringTokenizer st ;
 							String receiveMessage;
 							int index_x = 0 , index_y = 0;
+							
+							
 						    
 						    try {
-											if((receiveMessage = receiveRead.readLine()).equals("1")) {
-												System.out.println("1 geldi");
-												user2[prev_index_x][prev_index_y].setBackground(Color.RED);
-												pwrite.println(" ");
-												pwrite.flush();
+						    				if (first_step == 0) {
+						    					send_message(x , y);
+						    					first_step = 1;
+						    				}
+						    				if(array_user1[x][y] != 0) {
+												user2[x][y].setBackground(Color.red);
 											}
-										    else if((receiveMessage = receiveRead.readLine()) != null) {
-										    	int sendMessageX = x;
-												int sendMessageY = y;
-
-												sendMessage = Integer.toString(sendMessageX);
-												sendMessage+= " ";
-												sendMessage += Integer.toString(sendMessageY);
-
-												prev_index_x = sendMessageX;
-												prev_index_y = sendMessageY;
-												pwrite.println(sendMessage);             
-												pwrite.flush();
-												
-												send_message(x , y);
-											    System.out.println("user1 sends a message: " + sendMessage);
-													int count = 0;
+						    				else if(array_user1[x][y] == 0) {
+						    					user2[x][y].setBackground(Color.black);
+						    				}
+										    if((receiveMessage = receiveRead.readLine()) != null) {							
+													
 													System.out.println("user1 is received a msg: " + receiveMessage); 
 													st = new StringTokenizer(receiveMessage," "); 
-													   while (st.hasMoreTokens()) {  
-														   if(count == 0) {
-															   receive_hit = Integer.parseInt(st.nextToken());
-															   count++;
-														   }
-														   else if(count == 1) {
-															   index_x = Integer.parseInt(st.nextToken());  
-															   count++;
-														   }
-														   else {
-															   index_y = Integer.parseInt(st.nextToken());  
-														   }
-														}  
-													  if(!user1[index_x][index_y].getName().equals("0")) {
-														  user1[index_x][index_y].setBackground(Color.red);
-														  send_hit = 1;
-													  }
+												    index_x = Integer.parseInt(st.nextToken());  
+													index_y = Integer.parseInt(st.nextToken());  
+													if(!user1[index_x][index_y].getName().equals("0")) {
+												        user1[index_x][index_y].setBackground(Color.red);
+													}
+													  send_message(x , y);
 												}
 											} catch (IOException e1) {
 												// TODO Auto-generated catch block
@@ -206,6 +205,19 @@ public class BattleTest extends JFrame {
 						}
 
 						private void send_message(int x, int y) {
+							int sendMessageX = x;
+							int sendMessageY = y;
+							String sendMessage = " ";
+							
+							sendMessage = Integer.toString(sendMessageX);
+							sendMessage+= " ";
+							sendMessage += Integer.toString(sendMessageY);
+
+							prev_index_x = sendMessageX;
+							prev_index_y = sendMessageY;
+						    System.out.println("user1 sends a message: " + sendMessage);
+							pwrite.println(sendMessage);             
+							pwrite.flush();
 							
 						}
 					});
@@ -228,10 +240,30 @@ public class BattleTest extends JFrame {
 		 Socket sock = sersock.accept( );                          
 		 BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
 	     OutputStream ostream = sock.getOutputStream(); 
+	     ObjectInputStream is = new ObjectInputStream(sock.getInputStream());
+	     ObjectOutputStream os = new ObjectOutputStream(sock.getOutputStream());
 	     PrintWriter pwrite = new PrintWriter(ostream, true);
 	     InputStream istream = sock.getInputStream();
 	     BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
 
+	     try {
+			array_user1 = (byte[][])is.readObject();
+		} catch (ClassNotFoundException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+	     
+	     if(tmp == 0) {
+	    	 byte[][] array = new byte[11][11];
+	    	 for (int i = 1; i < array.length; i++) {
+				for (int j = 0; j < array.length; j++) {
+					array[i][j] = (byte)Integer.parseInt(user2[i][j].getName());
+				}
+			}
+	    	 os.writeObject(array);
+	    	 tmp = 1;
+	     }
+	     
 	     while(true){
 	    	 	for (int i = 0; i < user1.length; i++) {
 					for (int j = 0; j < user1.length; j++) {
@@ -245,46 +277,50 @@ public class BattleTest extends JFrame {
 								int y = (int) but.getClientProperty("column");
 								String sendMessage = " ";
 								String receiveMessage = " ";
-								int sendMessageX = x;
-								int sendMessageY = y;
-
-								sendMessage = Integer.toString(sendMessageX);
-								sendMessage+= " ";
-								sendMessage += Integer.toString(sendMessageY);
-								
+							
 								 StringTokenizer st ;
 								 int index_x = 0 , index_y = 0;
-								System.out.println("user2 sends a message: " + sendMessage);
-								 pwrite.println(sendMessage);       // sending to server
-							     pwrite.flush(); 
+								
 										
 											try {
+												if(array_user1[x][y] != 0) {
+													user1[x][y].setBackground(Color.red);
+												}
+												else user1[x][y].setBackground(Color.black);
+												
 												if((receiveMessage = receiveRead.readLine()) != null) 
 												{
-													int count = 0;
-													System.out.print("user2 is received a msg: " + receiveMessage +" "); 
+													System.out.println("user2 is received a msg: " + receiveMessage); 
 													st = new StringTokenizer(receiveMessage," "); 
-												   while (st.hasMoreTokens()) {  
-													   if(count == 0) {
-														   index_x = Integer.parseInt(st.nextToken());  
-														   count++;
-													   }
-													   else {
-														   index_y = Integer.parseInt(st.nextToken());  
-													   }
-													}  
+													index_x = Integer.parseInt(st.nextToken());  
+													index_y = Integer.parseInt(st.nextToken());  
+												}  
 												  if(!user2[index_x][index_y].getName().equals("0")) {
 													  user2[index_x][index_y].setBackground(Color.red);
-													  pwrite.println("1");
-													  pwrite.flush();
 												  }
-												  
-													
-												}
+												  send_message(x, y);
+												
+												
 											} catch (IOException e1) {
 												// TODO Auto-generated catch block
 												e1.printStackTrace();
 											}
+							}
+
+							private void send_message(int x, int y) {
+								int sendMessageX = x;
+								int sendMessageY = y;
+								String sendMessage = " ";
+								
+								sendMessage = Integer.toString(sendMessageX);
+								sendMessage+= " ";
+								sendMessage += Integer.toString(sendMessageY);
+							    System.out.println("user2 sends a message: " + sendMessage);
+								prev_index_x = sendMessageX;
+								prev_index_y = sendMessageY;
+								pwrite.println(sendMessage);             
+								pwrite.flush();
+								
 							}
 						});
 					 }
@@ -335,7 +371,7 @@ public class BattleTest extends JFrame {
 	     System.out.println("Client-Server connection is ready");
 	 
 	     String receiveMessage;
-	     sendMessage = 5;
+	     int sendMessage = 5;
     	 pwrite.println(sendMessage);       // sending to server
          pwrite.flush();                   // flush the data
          sock.close();
@@ -348,6 +384,7 @@ public class BattleTest extends JFrame {
 		// TODO Auto-generated method stub
 		fill_bot(btn);	
 //		
+		System.out.println("acildi");
 		for (int i = 0; i < btn.length; i++) {
 			for (int j = 0; j < btn.length; j++) {
 				btn[i][j].putClientProperty("row", i);
@@ -360,8 +397,10 @@ public class BattleTest extends JFrame {
 						int y = (int) but.getClientProperty("column");
 						System.out.println(x + " " + y);
 						if(!btn[x][y].getName().equals("0")) btn[x][y].setBackground(Color.red);
-						else 
+						else {
 							playBot(user1);
+							btn[x][y].setBackground(Color.black);
+						}
 					}
 					
 						private void playBot(JButton[][] user1) {

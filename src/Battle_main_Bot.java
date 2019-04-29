@@ -9,7 +9,7 @@ public class Battle_main_Bot {
 		SwingUtilities.invokeLater(new Runnable(){
 			public void run() {
 				
-				BattleTest setShip_user = new BattleTest(bot);
+				BattleTest setShip_user = new BattleTest(0);
 								
 	
 			}

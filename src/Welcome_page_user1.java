@@ -39,8 +39,8 @@ public class Welcome_page_user1 extends JFrame {
 		JButton btnNewButton = new JButton("Game with Computer");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				Battle_main_Bot.main(new String[]{});
-				Battle_main_user1.main(new String[]{});
+				Battle_main_Bot.main(new String[]{});
+//				Battle_main_user1.main(new String[]{});
 				fr1.dispose();
 			}
 		});
