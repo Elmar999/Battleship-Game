@@ -380,7 +380,7 @@ public class BattleTest extends JFrame {
 			for (int j = 0; j < btn.length; j++) {
 				btn[i][j].putClientProperty("row", i);
 				btn[i][j].putClientProperty("column", j);
-				btn[i][j].addActionListener(new actionlistener() {
+				btn[i][j].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						JButton but = (JButton) e.getSource();
 						int x = (int) but.getClientProperty("row");
