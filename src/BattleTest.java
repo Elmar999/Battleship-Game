@@ -26,17 +26,17 @@ public class BattleTest extends JFrame {
 	JButton[][] user1 = new JButton[11][11];
 	JButton[][] user2 = new JButton[11][11];
 	JButton[][] bot2 = new JButton[11][11];
-	private int confirm = 0;
-	private int rival ;
-	static int count1 = 0 , count2 = 0;
-	static int prev_index_x , prev_index_y , receive_hit = 0 , send_hit = 0;static int first_step = 0;
-	static int tmp = 0; static byte[][] array_user1;
+	private int confirm = 0; // used for confirmation button
+	private int rival ; // to see if it is bot , or user1 or user2
+	static int first_step = 0; //used to send first message via socket
+	static int tmp = 0; static byte[][] array_user1; //used to convert jbutton array to byte array 
 	
 	public BattleTest(int rival) {
 		this.rival = rival;
 		setVisible(true);  setSize(600, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+				
 		
 		JPanel panel = new JPanel();
 		setContentPane(panel);
@@ -213,8 +213,6 @@ public class BattleTest extends JFrame {
 							sendMessage+= " ";
 							sendMessage += Integer.toString(sendMessageY);
 
-							prev_index_x = sendMessageX;
-							prev_index_y = sendMessageY;
 						    System.out.println("user1 sends a message: " + sendMessage);
 							pwrite.println(sendMessage);             
 							pwrite.flush();
@@ -316,8 +314,7 @@ public class BattleTest extends JFrame {
 								sendMessage+= " ";
 								sendMessage += Integer.toString(sendMessageY);
 							    System.out.println("user2 sends a message: " + sendMessage);
-								prev_index_x = sendMessageX;
-								prev_index_y = sendMessageY;
+//								
 								pwrite.println(sendMessage);             
 								pwrite.flush();
 								
@@ -381,10 +378,7 @@ public class BattleTest extends JFrame {
 	
 
 	private void playGameBot(JButton[][] btn) {
-		// TODO Auto-generated method stub
-		fill_bot(btn);	
-//		
-		System.out.println("acildi");
+		fill_bot(btn);			
 		for (int i = 0; i < btn.length; i++) {
 			for (int j = 0; j < btn.length; j++) {
 				btn[i][j].putClientProperty("row", i);
@@ -392,7 +386,6 @@ public class BattleTest extends JFrame {
 				btn[i][j].addActionListener(new actionlistener() {
 					public void actionPerformed(ActionEvent e) {
 						JButton but = (JButton) e.getSource();
-	//					System.out.println(but.getClientProperty("row") + " " + but.getClientProperty("column")); 
 						int x = (int) but.getClientProperty("row");
 						int y = (int) but.getClientProperty("column");
 						System.out.println(x + " " + y);
