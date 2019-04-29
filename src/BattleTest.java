@@ -27,11 +27,9 @@ public class BattleTest extends JFrame {
 	private int confirm = 0;
 	private int rival ;
 	int sendMessage; static int count1 = 0 , count2 = 0;
-	ServerSocket sersock ;  Socket sock;  BufferedReader keyRead;
-	OutputStream ostream;	PrintWriter pwrite; InputStream istream;
-	BufferedReader receiveRead;
-	String receiveMessage ;
-
+	static int prev_index_x , prev_index_y , receive_hit = 0 , send_hit = 0;
+	
+	
 	public BattleTest(int rival) {
 		this.rival = rival;
 		setVisible(true);  setSize(600, 600);
@@ -41,7 +39,6 @@ public class BattleTest extends JFrame {
 		JPanel panel = new JPanel();
 		setContentPane(panel);
 		
-//		setLayout(new ());
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		
 		JPanel panel1 = new JPanel(); 
@@ -66,7 +63,7 @@ public class BattleTest extends JFrame {
 				try {
 					launch_user1_server(user2);
 					launch_user1_game();
-					System.out.println("serveri qurdum");
+					System.out.println("serveri established");
 				} catch (IOException | InterruptedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -76,7 +73,7 @@ public class BattleTest extends JFrame {
 				try {
 					launch_user2_client(user1);
 					launch_user2_game();
-					System.out.println("client quruldu");
+					System.out.println("client created");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -96,7 +93,6 @@ public class BattleTest extends JFrame {
 			fill_grid(user2, panel1);
 			fill_grid(user1, panel2); 
 		}
-//		add(panel);
 		
 		
 		if (rival == 0) {
@@ -122,13 +118,7 @@ public class BattleTest extends JFrame {
 					user2[i][j].setName(String.valueOf(0));
 				}
 			}
-		}
-//		print_matrix_values(button);
-		
-		
-//		System.out.println("oldu");
-		
-		
+		}		
 	}
 	
 	private void launch_user1_game() throws IOException, InterruptedException {
@@ -160,28 +150,42 @@ public class BattleTest extends JFrame {
 							int x = (int) but.getClientProperty("row");
 							int y = (int) but.getClientProperty("column");
 							String sendMessage = " ";
-							int sendMessageX = x;
-							int sendMessageY = y;
-
-							sendMessage = Integer.toString(sendMessageX);
-							sendMessage+= " ";
-							sendMessage += Integer.toString(sendMessageY);
-
+							
 						    StringTokenizer st ;
 							String receiveMessage;
 							int index_x = 0 , index_y = 0;
-						    pwrite.println(sendMessage);             
-							pwrite.flush();
-						    System.out.println("user1 sends a message: " + sendMessage);
+						    
+						    try {
+											if((receiveMessage = receiveRead.readLine()).equals("1")) {
+												System.out.println("1 geldi");
+												user2[prev_index_x][prev_index_y].setBackground(Color.RED);
+												pwrite.println(" ");
+												pwrite.flush();
+											}
+										    else if((receiveMessage = receiveRead.readLine()) != null) {
+										    	int sendMessageX = x;
+												int sendMessageY = y;
 
-							
-											try {
-												if((receiveMessage = receiveRead.readLine()) != null) {
+												sendMessage = Integer.toString(sendMessageX);
+												sendMessage+= " ";
+												sendMessage += Integer.toString(sendMessageY);
+
+												prev_index_x = sendMessageX;
+												prev_index_y = sendMessageY;
+												pwrite.println(sendMessage);             
+												pwrite.flush();
+												
+												send_message(x , y);
+											    System.out.println("user1 sends a message: " + sendMessage);
 													int count = 0;
 													System.out.println("user1 is received a msg: " + receiveMessage); 
 													st = new StringTokenizer(receiveMessage," "); 
 													   while (st.hasMoreTokens()) {  
 														   if(count == 0) {
+															   receive_hit = Integer.parseInt(st.nextToken());
+															   count++;
+														   }
+														   else if(count == 1) {
 															   index_x = Integer.parseInt(st.nextToken());  
 															   count++;
 														   }
@@ -189,14 +193,20 @@ public class BattleTest extends JFrame {
 															   index_y = Integer.parseInt(st.nextToken());  
 														   }
 														}  
-													  if(!user1[index_x][index_y].getName().equals("0"))
+													  if(!user1[index_x][index_y].getName().equals("0")) {
 														  user1[index_x][index_y].setBackground(Color.red);
+														  send_hit = 1;
+													  }
 												}
 											} catch (IOException e1) {
 												// TODO Auto-generated catch block
 												e1.printStackTrace();
 											}
 								 
+						}
+
+						private void send_message(int x, int y) {
+							
 						}
 					});
 				}
@@ -263,9 +273,13 @@ public class BattleTest extends JFrame {
 														   index_y = Integer.parseInt(st.nextToken());  
 													   }
 													}  
-												  if(!user2[index_x][index_y].getName().equals("0"))
+												  if(!user2[index_x][index_y].getName().equals("0")) {
 													  user2[index_x][index_y].setBackground(Color.red);
-
+													  pwrite.println("1");
+													  pwrite.flush();
+												  }
+												  
+													
 												}
 											} catch (IOException e1) {
 												// TODO Auto-generated catch block
