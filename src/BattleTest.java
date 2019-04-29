@@ -458,10 +458,6 @@ public class BattleTest extends JFrame {
 		
 	}
 
-	public int getconfirm() {
-		return confirm;
-	}
-	
 	
 	void fill_with_letter(JButton[][] button ,int row , int col , int n) {
 		String letter ;

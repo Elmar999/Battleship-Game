@@ -29,6 +29,9 @@ public class BoatMouseListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		/* mouse click used for selecting a exact number of ship */
+		
+		
 		set_boat_number(boat_number);
 		System.out.print(boat_number + " is selected\n");
 	}
