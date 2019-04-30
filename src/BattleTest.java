@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 public class BattleTest extends JFrame {
 		
@@ -30,6 +31,8 @@ public class BattleTest extends JFrame {
 	private int rival ; // to see if it is bot , or user1 or user2
 	static int first_step = 0; //used to send first message via socket
 	static int tmp = 0; static byte[][] array_user1; //used to convert jbutton array to byte array 
+	static int numOfShippedCells = 17 ; // in order to indicate that we have 17 cells which have filled with ships
+	static int hitted = 0 ; // a variable that show number of cells which are hitten
 	
 	public BattleTest(int rival) {
 		this.rival = rival;
@@ -144,6 +147,9 @@ public class BattleTest extends JFrame {
 		     BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));	
 
 	     int count = 0;
+	     
+	     
+	     /* sending this players data to opponent */
 	     if(tmp == 0) {
 	    	 byte[][] array = new byte[11][11];
 	    	 for (int i = 1; i < array.length; i++) 
@@ -184,7 +190,16 @@ public class BattleTest extends JFrame {
 						    				}
 						    				if(array_user1[x][y] != 0) {
 												user2[x][y].setBackground(Color.red); // if hitted 
-											}
+												hitted++;
+												 if (hitted == 17) { 
+														int input = JOptionPane.showOptionDialog(null, "You are the winner."
+														+ " Want to exit ?", "GAME OVER", JOptionPane.OK_CANCEL_OPTION, 
+														JOptionPane.INFORMATION_MESSAGE, null, null, null);
+														if (input == JOptionPane.OK_OPTION) {
+															System.exit(0);
+														}
+											        }
+						    				}
 						    				else if(array_user1[x][y] == 0) {
 						    					user2[x][y].setBackground(Color.black); //  if not
 						    				}
@@ -196,6 +211,15 @@ public class BattleTest extends JFrame {
 													/* if my ship was hitten make the cell red */
 													if(!user1[index_x][index_y].getName().equals("0")) {
 												        user1[index_x][index_y].setBackground(Color.red);
+												        numOfShippedCells--;
+												        if (numOfShippedCells == 0) { 
+															int input = JOptionPane.showOptionDialog(null, "GAME OVER for PLAYER 1."
+															+ " Want to exit ?", "GAME OVER", JOptionPane.OK_CANCEL_OPTION, 
+															JOptionPane.INFORMATION_MESSAGE, null, null, null);
+															if (input == JOptionPane.OK_OPTION) {
+																System.exit(0);
+															}
+												        }
 													}
 													  send_message(x , y);
 												}
@@ -250,6 +274,7 @@ public class BattleTest extends JFrame {
 		}
 	     
 	     if(tmp == 0) {
+		     /* sending this players data to opponent */
 	    	 byte[][] array = new byte[11][11];
 	    	 for (int i = 1; i < array.length; i++) {
 				for (int j = 0; j < array.length; j++) {
@@ -281,6 +306,15 @@ public class BattleTest extends JFrame {
 											try {
 												if(array_user1[x][y] != 0) {
 													user1[x][y].setBackground(Color.red);
+													hitted++;
+													 if (hitted == 17) { 
+															int input = JOptionPane.showOptionDialog(null, "You are the winner."
+															+ " Want to exit ?", "GAME OVER", JOptionPane.OK_CANCEL_OPTION, 
+															JOptionPane.INFORMATION_MESSAGE, null, null, null);
+															if (input == JOptionPane.OK_OPTION) {
+																System.exit(0);
+															}
+												        }
 												}
 												else user1[x][y].setBackground(Color.black);
 												
@@ -290,12 +324,22 @@ public class BattleTest extends JFrame {
 													st = new StringTokenizer(receiveMessage," "); 
 													index_x = Integer.parseInt(st.nextToken());  
 													index_y = Integer.parseInt(st.nextToken());  
-												}  
+												  
 												  if(!user2[index_x][index_y].getName().equals("0")) {
 													  user2[index_x][index_y].setBackground(Color.red);
+													  numOfShippedCells--;
+												        /* means there is no ship that should be hitten */
+												        if (numOfShippedCells == 0) { 
+															int input = JOptionPane.showOptionDialog(null, "GAME OVER for PLAYER 2."
+															+ " Want to exit ?", "GAME OVER", JOptionPane.OK_CANCEL_OPTION, 
+															JOptionPane.INFORMATION_MESSAGE, null, null, null);
+															if (input == JOptionPane.OK_OPTION) {
+																System.exit(0);
+															}
+												        }
 												  }
 												  send_message(x, y);
-												
+												}
 												
 											} catch (IOException e1) {
 												e1.printStackTrace();
@@ -510,7 +554,5 @@ public class BattleTest extends JFrame {
 			System.out.println();
 		}
 	}
-	
-//	public void 	
-	
+		
 }
