@@ -10,4 +10,4 @@ players push the confirm button server-client connection establishes . More info
 For launching the program :
   welcome_page_bot.java used for launching the game with bot;
  welcome_page_user1.java used for launching the player1;
- welcome_page_bot.java used for launching the player2;
+ welcome_page_bot.java used for launching the player2.
