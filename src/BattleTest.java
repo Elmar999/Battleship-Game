@@ -430,7 +430,18 @@ public class BattleTest extends JFrame {
 						int x = (int) but.getClientProperty("row");
 						int y = (int) but.getClientProperty("column");
 						System.out.println(x + " " + y);
-						if(!btn[x][y].getName().equals("0")) btn[x][y].setBackground(Color.red);
+						if(!btn[x][y].getName().equals("0")) { 
+							btn[x][y].setBackground(Color.red);
+							hitted++;
+							 if (hitted == 17) { 
+									int input = JOptionPane.showOptionDialog(null, "You are the winner."
+									+ " Want to exit ?", "GAME OVER", JOptionPane.OK_CANCEL_OPTION, 
+									JOptionPane.INFORMATION_MESSAGE, null, null, null);
+									if (input == JOptionPane.OK_OPTION) {
+										System.exit(0);
+									}
+						        }
+						}
 						else {
 							btn[x][y].setBackground(Color.black);
 							playBot(user1);
@@ -448,6 +459,16 @@ public class BattleTest extends JFrame {
 							}
 							else if(!user1[x][y].getName().equals("0") && !user1[x][y].getName().equals("1")) {
 								user1[x][y].setBackground(Color.red);
+								 numOfShippedCells--;
+							        /* means there is no ship that should be hitten */
+							        if (numOfShippedCells == 0) { 
+										int input = JOptionPane.showOptionDialog(null, "GAME OVER for PLAYER 2."
+										+ " Want to exit ?", "GAME OVER", JOptionPane.OK_CANCEL_OPTION, 
+										JOptionPane.INFORMATION_MESSAGE, null, null, null);
+										if (input == JOptionPane.OK_OPTION) {
+											System.exit(0);
+										}
+							        }
 								sleep(2);
 								playBot(user1);
 							}
