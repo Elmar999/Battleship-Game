@@ -1,4 +1,4 @@
-BattleShip project -- NIHAD SHUKUR and ELMAR HAJIZADE
+BattleShip project -- ELMAR HAJIZADE
 
 This project simulates the games between player and bot , on the other hand the game between 2 players using network 
 programming distributed in this program . First we started from Bot version with agile development , our bot will randomly 
